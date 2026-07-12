@@ -1,0 +1,110 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Bed;
+use App\Models\Patient;
+use Illuminate\Http\Request;
+
+class BedController extends Controller
+{
+    public function index(Request $request)
+    {
+        $beds = Bed::query()
+            ->with('patient')
+            ->when($request->ward, fn ($q, $ward) => $q->where('ward', $ward))
+            ->when($request->status, fn ($q, $status) => $q->where('status', $status))
+            ->orderBy('ward')
+            ->orderBy('bed_number')
+            ->get();
+
+        $wards = Bed::select('ward')->distinct()->orderBy('ward')->pluck('ward');
+
+        $counts = [
+            'total' => Bed::count(),
+            'available' => Bed::where('status', 'Available')->count(),
+            'occupied' => Bed::where('status', 'Occupied')->count(),
+            'maintenance' => Bed::where('status', 'Maintenance')->count(),
+        ];
+
+        return view('backend.beds.index', compact('beds', 'wards', 'counts'));
+    }
+
+    public function create()
+    {
+        return view('backend.beds.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'bed_number' => ['required', 'string', 'max:50', 'unique:beds,bed_number'],
+            'ward' => ['required', 'string', 'max:100'],
+            'floor' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $validated['status'] = 'Available';
+
+        Bed::create($validated);
+
+        return redirect()->route('admin.beds.index')->with('status', 'Bed added successfully.');
+    }
+
+    public function edit(Bed $bed)
+    {
+        return view('backend.beds.edit', compact('bed'));
+    }
+
+    public function update(Request $request, Bed $bed)
+    {
+        $validated = $request->validate([
+            'bed_number' => ['required', 'string', 'max:50', 'unique:beds,bed_number,' . $bed->id],
+            'ward' => ['required', 'string', 'max:100'],
+            'floor' => ['nullable', 'string', 'max:50'],
+            'status' => ['required', 'in:Available,Occupied,Maintenance'],
+        ]);
+
+        if ($validated['status'] !== 'Occupied') {
+            $validated['patient_id'] = null;
+            $validated['occupied_at'] = null;
+        }
+
+        $bed->update($validated);
+
+        return redirect()->route('admin.beds.index')->with('status', 'Bed updated successfully.');
+    }
+
+    public function destroy(Bed $bed)
+    {
+        $bed->delete();
+
+        return redirect()->route('admin.beds.index')->with('status', 'Bed removed successfully.');
+    }
+
+    public function assign(Request $request, Bed $bed)
+    {
+        $validated = $request->validate([
+            'patient_id' => ['required', 'exists:patients,id'],
+        ]);
+
+        $bed->update([
+            'patient_id' => $validated['patient_id'],
+            'status' => 'Occupied',
+            'occupied_at' => now(),
+        ]);
+
+        return back()->with('status', 'Bed ' . $bed->bed_number . ' assigned to ' . Patient::find($validated['patient_id'])->name . '.');
+    }
+
+    public function discharge(Bed $bed)
+    {
+        $bed->update([
+            'patient_id' => null,
+            'status' => 'Available',
+            'occupied_at' => null,
+        ]);
+
+        return back()->with('status', 'Bed ' . $bed->bed_number . ' is now available.');
+    }
+}

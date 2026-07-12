@@ -1,0 +1,94 @@
+/* Healix HMS - custom responsive fixes for the admin panel */
+
+/* Prevent horizontal page scroll caused by wide content */
+body {
+    overflow-x: hidden;
+}
+
+/* Cards and tables should never force the page wider than the viewport */
+.card,
+.table-responsive {
+    max-width: 100%;
+}
+
+/* Toolbar rows (search + filter + action button) wrap cleanly on small screens */
+@media (max-width: 767px) {
+    .page-title-box {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .page-title-box .breadcrumb {
+        margin-top: 8px;
+    }
+
+    .card-body form.d-flex {
+        max-width: 100% !important;
+        width: 100%;
+    }
+
+    .card-body .d-flex.flex-wrap.gap-2 {
+        width: 100%;
+    }
+
+    .card-body .d-flex.flex-wrap.gap-2 > a.btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Stat cards and widgets stack with consistent spacing on small screens */
+@media (max-width: 575px) {
+    .col-md-6.col-lg-3,
+    .col-md-6.col-lg-4,
+    .col-lg-8,
+    .col-lg-9 {
+        margin-bottom: 16px;
+    }
+}
+
+/* Dynamic line-item tables (invoices / prescriptions) scroll horizontally
+   instead of squeezing inputs unreadably small */
+#items-table {
+    min-width: 640px;
+}
+
+#items-table input.form-control {
+    min-width: 90px;
+}
+
+/* Sidebar readability on small tablets */
+@media (max-width: 991px) {
+    .startbar {
+        z-index: 1050;
+    }
+}
+
+/* --------------------------------------------------------------------
+   Admin footer position fix.
+   The theme's .footer is `position:absolute; bottom:0; left:0; right:0;`
+   but its parent (.page-wrapper) never gets `position:relative`, so the
+   footer anchors to the whole HTML document instead of the dashboard
+   area - and it also ignores the sidebar width, so it starts from the
+   far-left edge instead of lining up with the page content. That's why
+   it looks misplaced / overlaps the sidebar / floats oddly on short pages.
+   -------------------------------------------------------------------- */
+.page-wrapper {
+    position: relative;
+    min-height: 100vh;
+}
+
+.page-wrapper .footer {
+    left: var(--bs-startbar-width);
+    transition: 0.3s;
+}
+
+body[data-sidebar-size="collapsed"] .page-wrapper .footer {
+    left: var(--bs-startbar-collapsed-width);
+}
+
+@media (max-width: 1199.98px) {
+    .page-wrapper .footer {
+        left: 0;
+    }
+}
