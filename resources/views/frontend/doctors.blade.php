@@ -25,7 +25,7 @@
 
 									<!-- Doctor Photo -->
 									<div class="hover-overlay"> 
-										<img class="img-fluid" src="{{ asset('frontend/images/doctor-' . ((($loop->index) % 6) + 1) . '.jpg') }}" alt="{{ $doctor->name }}">	
+										<img class="img-fluid" src="{{ $doctor->photoUrl() }}" alt="{{ $doctor->name }}">	
 									</div>										
 																
 									<!-- Doctor Meta -->		

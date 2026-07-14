@@ -68,6 +68,8 @@ class FrontendController extends Controller
     {
         abort_unless($doctor->status === 'Active', 404);
 
+        $doctor->load('schedules');
+
         return view('frontend.doctor-show', compact('doctor'));
     }
 
@@ -97,6 +99,8 @@ class FrontendController extends Controller
             'message' => ['nullable', 'string'],
         ]);
 
+        $doctor = Doctor::findOrFail($validated['doctor_id']);
+
         $patient = \App\Models\Patient::firstOrCreate(
             ['phone' => $validated['phone']],
             [
@@ -112,17 +116,113 @@ class FrontendController extends Controller
             $validated['patient_type'] ?? null,
         ]);
 
-        \App\Models\Appointment::create([
-            'patient_id' => $patient->id,
-            'doctor_id' => $validated['doctor_id'],
-            'appointment_date' => $validated['appointment_date'],
-            'appointment_time' => '10:00',
-            'reason' => implode(' - ', $reasonParts) ?: 'Website appointment request',
-            'status' => 'Scheduled',
-            'notes' => $validated['message'] ?? null,
+        $appointment = $this->bookAppointment($patient, $doctor, $validated['appointment_date'], implode(' - ', $reasonParts) ?: 'Website appointment request', $validated['message'] ?? null);
+
+        return redirect()->route('frontend.appointment.confirmation', $appointment);
+    }
+
+    /**
+     * Book an appointment for a specific doctor from their profile page -
+     * generates a daily serial number scoped to that doctor and date.
+     */
+    public function doctorBook(Doctor $doctor)
+    {
+        abort_unless($doctor->status === 'Active', 404);
+
+        $doctor->load('schedules');
+
+        return view('frontend.doctor-book', compact('doctor'));
+    }
+
+    public function doctorBookStore(Request $request, Doctor $doctor)
+    {
+        abort_unless($doctor->status === 'Active', 404);
+
+        $validated = $request->validate([
+            'appointment_date' => ['required', 'date', 'after_or_equal:today'],
+            'name' => ['required', 'string', 'max:255'],
+            'gender' => ['required', 'in:Male,Female,Other'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
+            'message' => ['nullable', 'string'],
         ]);
 
-        return back()->with('appointment_status', 'Thank you! Your appointment request has been received. Our team will contact you shortly to confirm the exact time.');
+        $patient = \App\Models\Patient::firstOrCreate(
+            ['phone' => $validated['phone']],
+            [
+                'name' => $validated['name'],
+                'gender' => $validated['gender'],
+                'email' => $validated['email'],
+                'status' => 'Active',
+            ]
+        );
+
+        $appointment = $this->bookAppointment($patient, $doctor, $validated['appointment_date'], 'Website appointment request', $validated['message'] ?? null);
+
+        return redirect()->route('frontend.appointment.confirmation', $appointment);
+    }
+
+    public function appointmentConfirmation(\App\Models\Appointment $appointment)
+    {
+        $appointment->load('doctor', 'patient');
+
+        return view('frontend.appointment-confirmation', compact('appointment'));
+    }
+
+    /**
+     * Shared booking logic: works out the scheduled time from the doctor's
+     * timetable for that weekday (falls back to 10:00), assigns the next
+     * daily serial number for that doctor, creates the appointment, and
+     * notifies the doctor + front-desk staff.
+     */
+    private function bookAppointment(\App\Models\Patient $patient, Doctor $doctor, string $date, string $reason, ?string $notes)
+    {
+        $dayName = \Carbon\Carbon::parse($date)->format('l');
+        $slot = $doctor->schedules()->where('day_of_week', $dayName)->first();
+
+        $serial = \App\Models\Appointment::nextSerialFor($doctor->id, $date);
+
+        $appointment = \App\Models\Appointment::create([
+            'patient_id' => $patient->id,
+            'doctor_id' => $doctor->id,
+            'appointment_date' => $date,
+            'appointment_time' => $slot->start_time ?? '10:00',
+            'serial_number' => $serial,
+            'reason' => $reason,
+            'status' => 'Scheduled',
+            'notes' => $notes,
+        ]);
+
+        if ($doctor->user) {
+            \App\Services\NotifyService::send(
+                $doctor->user,
+                'New appointment booked',
+                $patient->name . ' booked serial #' . $serial . ' for ' . \Carbon\Carbon::parse($date)->format('d M, Y'),
+                route('admin.appointments.show', $appointment),
+                'iconoir-calendar-plus',
+                'success'
+            );
+        }
+
+        \App\Services\NotifyService::roles(
+            ['Super Admin', 'Hospital Admin', 'Receptionist'],
+            'New appointment',
+            $patient->name . ' booked Dr. ' . $doctor->name . ' - serial #' . $serial,
+            route('admin.appointments.show', $appointment),
+            'iconoir-calendar-plus',
+            'info'
+        );
+
+        if ($patient->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($patient->email)
+                    ->send(new \App\Mail\AppointmentConfirmationMail($appointment->load('doctor', 'patient')));
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        return $appointment;
     }
 
     public function faqs()

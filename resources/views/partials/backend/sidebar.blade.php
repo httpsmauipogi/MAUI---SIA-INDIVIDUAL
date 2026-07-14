@@ -92,8 +92,10 @@
                                     @hasanyrole('Super Admin|Hospital Admin|Receptionist')
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.appointments.create') }}">New Appointment</a></li>
                                     @endhasanyrole
-                                    <li class="nav-item"><a class="nav-link" href="#">OPD</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">IPD</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.appointments.index') }}">OPD (Outpatient)</a></li>
+                                    @hasanyrole('Super Admin|Hospital Admin|Receptionist|Nurse|Doctor')
+                                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.admissions.index') }}">IPD (Admissions)</a></li>
+                                    @endhasanyrole
                                 </ul>
                             </div><!--end sidebarAppointments-->
                         </li><!--end nav-item-->
@@ -178,8 +180,8 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.invoices.index') }}">Invoices</a></li>
                                     @hasanyrole('Super Admin|Hospital Admin|Accountant')
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.invoices.create') }}">New Invoice</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.expenses.index') }}">Expenses</a></li>
                                     @endhasanyrole
-                                    <li class="nav-item"><a class="nav-link" href="#">Expenses</a></li>
                                 </ul>
                             </div><!--end sidebarBilling-->
                         </li><!--end nav-item-->
@@ -234,7 +236,7 @@
 
                         @hasanyrole('Super Admin|Hospital Admin|Accountant')
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
                                 <i class="iconoir-stats-report menu-icon"></i>
                                 <span>Reports &amp; Analytics</span>
                             </a>

@@ -101,9 +101,8 @@
                             </div>
                             <div class="dropdown-divider mt-0"></div>
                             <small class="text-muted px-2 pb-1 d-block">Account</small>
-                            @if (auth()->user()?->hasAnyRole(['Super Admin', 'Hospital Admin']))
-                                <a class="dropdown-item" href="{{ route('admin.users.show', auth()->user()) }}"><i class="las la-user fs-18 me-1 align-text-bottom"></i> Profile</a>
-                                <a class="dropdown-item" href="{{ route('admin.users.edit', auth()->user()) }}"><i class="las la-cog fs-18 me-1 align-text-bottom"></i> Account Settings</a>
+                            <a class="dropdown-item" href="{{ route('admin.profile.edit') }}"><i class="las la-user fs-18 me-1 align-text-bottom"></i> My Profile</a>
+                            @if (auth()->user()?->hasRole('Super Admin'))
                                 <small class="text-muted px-2 py-1 d-block">Settings</small>
                                 <a class="dropdown-item" href="{{ route('admin.settings.website') }}"><i class="las la-globe fs-18 me-1 align-text-bottom"></i> Website Settings</a>
                             @endif

@@ -36,6 +36,7 @@
                                 <th>Doctor</th>
                                 <th>Date</th>
                                 <th>Time</th>
+                                <th>Serial</th>
                                 <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -48,6 +49,7 @@
                                     <td>Dr. {{ $appointment->doctor->name ?? 'N/A' }}</td>
                                     <td>{{ $appointment->appointment_date->format('d M, Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') }}</td>
+                                    <td>{{ $appointment->serial_number ?? '-' }}</td>
                                     <td>
                                         @php
                                             $statusClass = match ($appointment->status) {
@@ -70,7 +72,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-4">No appointments found. <a href="{{ route('admin.appointments.create') }}">Book the first appointment</a>.</td>
+                                    <td colspan="8" class="text-center text-muted py-4">No appointments found. <a href="{{ route('admin.appointments.create') }}">Book the first appointment</a>.</td>
                                 </tr>
                             @endforelse
                         </tbody>

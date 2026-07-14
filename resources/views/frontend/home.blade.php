@@ -340,7 +340,7 @@
 								<div class="hover-overlay text-center"> 
 
 									<!-- Photo -->
-									<img class="img-fluid" src="{{ asset('frontend/images/doctor-' . ((($loop->index) % 6) + 1) . '.jpg') }}" alt="Dr. {{ $doctor->name }}">	
+									<img class="img-fluid" src="{{ $doctor->photoUrl() }}" alt="Dr. {{ $doctor->name }}">	
 									<div class="item-overlay"></div>
 
 									<!-- Profile Link -->		

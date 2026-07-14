@@ -12,6 +12,9 @@
                     <div>
                         <h4 class="mb-1">{{ $appointment->appointment_no }}</h4>
                         <p class="text-muted mb-0">{{ $appointment->appointment_date->format('d M, Y') }} at {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('h:i A') }}</p>
+                        @if ($appointment->serial_number)
+                            <p class="text-muted mb-0">Serial No: <strong>{{ $appointment->serial_number }}</strong></p>
+                        @endif
                     </div>
                     @php
                         $statusClass = match ($appointment->status) {

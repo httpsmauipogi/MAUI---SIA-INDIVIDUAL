@@ -15,6 +15,7 @@ class Appointment extends Model
         'doctor_id',
         'appointment_date',
         'appointment_time',
+        'serial_number',
         'reason',
         'status',
         'notes',
@@ -36,6 +37,20 @@ class Appointment extends Model
                 'appointment_no' => 'APT-' . str_pad((string) $appointment->id, 5, '0', STR_PAD_LEFT),
             ]);
         });
+    }
+
+    /**
+     * The next serial number for this doctor on this date - resets to 1
+     * every day since it only counts appointments on that exact date.
+     */
+    public static function nextSerialFor(int $doctorId, string $date): int
+    {
+        $count = static::where('doctor_id', $doctorId)
+            ->whereDate('appointment_date', $date)
+            ->where('status', '!=', 'Cancelled')
+            ->count();
+
+        return $count + 1;
     }
 
     public function patient()

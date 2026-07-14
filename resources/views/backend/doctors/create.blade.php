@@ -8,7 +8,7 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route('admin.doctors.store') }}">
+                <form method="POST" action="{{ route('admin.doctors.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="row">
@@ -23,6 +23,13 @@
                             @error('user_id') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                             <small class="text-muted">Linking lets this doctor log in and see their own patients under "My Patients". Only staff accounts with the Doctor role are listed; add one from Staff first if needed.</small>
                         </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label" for="photo">Photo <span class="text-muted">(optional, shown on the website)</span></label>
+                            <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo" accept="image/*">
+                            @error('photo') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+
                         <div class="col-md-6 mb-3">
                             <label class="form-label" for="name">Full Name</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="Without 'Dr.' prefix">
@@ -63,6 +70,24 @@
                             <label class="form-label" for="consultation_fee">Consultation Fee</label>
                             <input type="text" class="form-control @error('consultation_fee') is-invalid @enderror" id="consultation_fee" name="consultation_fee" value="{{ old('consultation_fee') }}" placeholder="e.g. 800 BDT">
                             @error('consultation_fee') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="branch">Branch</label>
+                            <input type="text" class="form-control @error('branch') is-invalid @enderror" id="branch" name="branch" value="{{ old('branch') }}" placeholder="e.g. Main Branch, Uttara">
+                            @error('branch') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="floor">Floor</label>
+                            <input type="text" class="form-control @error('floor') is-invalid @enderror" id="floor" name="floor" value="{{ old('floor') }}" placeholder="e.g. 3rd Floor">
+                            @error('floor') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="room_no">Room No</label>
+                            <input type="text" class="form-control @error('room_no') is-invalid @enderror" id="room_no" name="room_no" value="{{ old('room_no') }}" placeholder="e.g. 304">
+                            @error('room_no') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                         </div>
                     </div>
 

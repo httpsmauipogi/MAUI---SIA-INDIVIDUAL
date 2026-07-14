@@ -37,15 +37,23 @@ class DoctorController extends Controller
         $validated = $request->validate([
             'user_id' => ['nullable', 'exists:users,id'],
             'name' => ['required', 'string', 'max:255'],
+            'photo' => ['nullable', 'image', 'max:2048'],
             'specialization' => ['required', 'string', 'max:255'],
             'qualification' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
             'email' => ['nullable', 'email', 'max:255'],
             'experience_years' => ['nullable', 'integer', 'min:0'],
             'consultation_fee' => ['nullable', 'string', 'max:50'],
+            'branch' => ['nullable', 'string', 'max:255'],
+            'floor' => ['nullable', 'string', 'max:50'],
+            'room_no' => ['nullable', 'string', 'max:50'],
         ]);
 
         $validated['status'] = 'Active';
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('doctors', 'public');
+        }
 
         Doctor::create($validated);
 
@@ -54,12 +62,15 @@ class DoctorController extends Controller
 
     public function show(Doctor $doctor)
     {
+        $doctor->load('schedules');
+
         return view('backend.doctors.show', compact('doctor'));
     }
 
     public function edit(Doctor $doctor)
     {
         $users = $this->availableDoctorUsers($doctor);
+        $doctor->load('schedules');
 
         return view('backend.doctors.edit', compact('doctor', 'users'));
     }
@@ -69,14 +80,22 @@ class DoctorController extends Controller
         $validated = $request->validate([
             'user_id' => ['nullable', 'exists:users,id'],
             'name' => ['required', 'string', 'max:255'],
+            'photo' => ['nullable', 'image', 'max:2048'],
             'specialization' => ['required', 'string', 'max:255'],
             'qualification' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
             'email' => ['nullable', 'email', 'max:255'],
             'experience_years' => ['nullable', 'integer', 'min:0'],
             'consultation_fee' => ['nullable', 'string', 'max:50'],
+            'branch' => ['nullable', 'string', 'max:255'],
+            'floor' => ['nullable', 'string', 'max:50'],
+            'room_no' => ['nullable', 'string', 'max:50'],
             'status' => ['required', 'in:Active,On Leave,Inactive'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('doctors', 'public');
+        }
 
         $doctor->update($validated);
 
@@ -88,6 +107,28 @@ class DoctorController extends Controller
         $doctor->delete();
 
         return redirect()->route('admin.doctors.index')->with('status', 'Doctor deleted successfully.');
+    }
+
+    public function addSchedule(Request $request, Doctor $doctor)
+    {
+        $validated = $request->validate([
+            'day_of_week' => ['required', 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday'],
+            'start_time' => ['required'],
+            'end_time' => ['required', 'after:start_time'],
+        ]);
+
+        $doctor->schedules()->create($validated);
+
+        return back()->with('status', 'Schedule slot added.');
+    }
+
+    public function deleteSchedule(Doctor $doctor, \App\Models\DoctorSchedule $schedule)
+    {
+        abort_unless($schedule->doctor_id === $doctor->id, 404);
+
+        $schedule->delete();
+
+        return back()->with('status', 'Schedule slot removed.');
     }
 
     /**

@@ -11,7 +11,7 @@ class SiteSettingController extends Controller
 {
     private array $fields = [
         // General
-        'site_name', 'tagline', 'phone', 'email', 'address',
+        'site_name', 'tagline', 'phone', 'emergency_phone', 'email', 'address',
         // Social
         'facebook_url', 'twitter_url', 'instagram_url', 'linkedin_url', 'youtube_url',
         // Homepage
@@ -35,6 +35,7 @@ class SiteSettingController extends Controller
             'site_name' => ['nullable', 'string', 'max:255'],
             'tagline' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
+            'emergency_phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:255'],
             'address' => ['nullable', 'string', 'max:500'],
             'facebook_url' => ['nullable', 'url', 'max:255'],

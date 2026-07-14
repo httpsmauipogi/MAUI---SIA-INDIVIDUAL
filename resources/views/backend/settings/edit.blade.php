@@ -61,6 +61,10 @@
                             <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone', $settings['phone'] ?? '') }}">
                         </div>
                         <div class="col-md-6 mb-3">
+                            <label class="form-label" for="emergency_phone">Emergency Phone <span class="text-muted">(shown in footer, falls back to Phone if blank)</span></label>
+                            <input type="text" class="form-control" id="emergency_phone" name="emergency_phone" value="{{ old('emergency_phone', $settings['emergency_phone'] ?? '') }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label class="form-label" for="email">Email</label>
                             <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $settings['email'] ?? '') }}">
                         </div>

@@ -44,6 +44,7 @@ class AppointmentController extends Controller
         ]);
 
         $validated['status'] = 'Scheduled';
+        $validated['serial_number'] = Appointment::nextSerialFor($validated['doctor_id'], $validated['appointment_date']);
 
         $appointment = Appointment::create($validated);
 
@@ -56,6 +57,15 @@ class AppointmentController extends Controller
             'primary',
             auth()->id()
         );
+
+        if ($appointment->patient->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($appointment->patient->email)
+                    ->send(new \App\Mail\AppointmentConfirmationMail($appointment->load('doctor', 'patient')));
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
         return redirect()->route('admin.appointments.index')->with('status', 'Appointment booked successfully.');
     }

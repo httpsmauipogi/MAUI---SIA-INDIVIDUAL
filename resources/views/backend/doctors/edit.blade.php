@@ -8,7 +8,7 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route('admin.doctors.update', $doctor) }}">
+                <form method="POST" action="{{ route('admin.doctors.update', $doctor) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -24,6 +24,17 @@
                             @error('user_id') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                             <small class="text-muted">Linking lets this doctor log in and see their own patients under "My Patients".</small>
                         </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label" for="photo">Photo</label>
+                            @if ($doctor->photo)
+                                <div class="mb-2"><img src="{{ $doctor->photoUrl() }}" alt="{{ $doctor->name }}" height="70" class="rounded"></div>
+                            @endif
+                            <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo" accept="image/*">
+                            @error('photo') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                            <small class="text-muted">Leave blank to keep the current photo.</small>
+                        </div>
+
                         <div class="col-md-6 mb-3">
                             <label class="form-label" for="name">Full Name</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $doctor->name) }}">
@@ -75,12 +86,77 @@
                             </select>
                             @error('status') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                         </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="branch">Branch</label>
+                            <input type="text" class="form-control @error('branch') is-invalid @enderror" id="branch" name="branch" value="{{ old('branch', $doctor->branch) }}" placeholder="e.g. Main Branch, Uttara">
+                            @error('branch') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="floor">Floor</label>
+                            <input type="text" class="form-control @error('floor') is-invalid @enderror" id="floor" name="floor" value="{{ old('floor', $doctor->floor) }}" placeholder="e.g. 3rd Floor">
+                            @error('floor') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="room_no">Room No</label>
+                            <input type="text" class="form-control @error('room_no') is-invalid @enderror" id="room_no" name="room_no" value="{{ old('room_no', $doctor->room_no) }}" placeholder="e.g. 304">
+                            @error('room_no') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
                     </div>
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Update Doctor</button>
                         <a href="{{ route('admin.doctors.index') }}" class="btn btn-light">Cancel</a>
                     </div>
+                </form>
+            </div><!--end card-body-->
+        </div><!--end card-->
+    </div><!--end col-->
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-3">Weekly Schedule</h5>
+
+                @forelse ($doctor->schedules as $slot)
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                        <div>
+                            <p class="mb-0 fw-medium">{{ $slot->day_of_week }}</p>
+                            <small class="text-muted">{{ $slot->formattedTime() }}</small>
+                        </div>
+                        <form action="{{ route('admin.doctors.schedules.destroy', [$doctor, $slot]) }}" method="POST" onsubmit="return confirm('Remove this schedule slot?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-soft-danger"><i class="las la-trash-alt"></i></button>
+                        </form>
+                    </div>
+                @empty
+                    <p class="text-muted">No schedule slots added yet. Patients won't see a timetable on the website until you add some below.</p>
+                @endforelse
+
+                <form action="{{ route('admin.doctors.schedules.store', $doctor) }}" method="POST" class="mt-3">
+                    @csrf
+                    <div class="mb-2">
+                        <label class="form-label" for="day_of_week">Day</label>
+                        <select class="form-select" id="day_of_week" name="day_of_week" required>
+                            @foreach (['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $day)
+                                <option value="{{ $day }}">{{ $day }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-2">
+                            <label class="form-label" for="start_time">Start</label>
+                            <input type="time" class="form-control" id="start_time" name="start_time" required>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label class="form-label" for="end_time">End</label>
+                            <input type="time" class="form-control" id="end_time" name="end_time" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-soft-primary w-100 mt-2">Add Slot</button>
                 </form>
             </div><!--end card-body-->
         </div><!--end card-->

@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdmissionController;
 use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\BedController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\DutyLogController;
+use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\LabOrderController;
 use App\Http\Controllers\Admin\LabTestController;
@@ -14,7 +16,9 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PageContentController;
 use App\Http\Controllers\Admin\PatientController;
 use App\Http\Controllers\Admin\PrescriptionController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SiteSettingController;
+use App\Http\Controllers\Admin\StaffProfileController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +49,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Doctors directory management - admin roles only
         Route::middleware('role:Super Admin|Hospital Admin')->group(function () {
             Route::resource('doctors', DoctorController::class);
+            Route::post('doctors/{doctor}/schedules', [DoctorController::class, 'addSchedule'])->name('doctors.schedules.store');
+            Route::delete('doctors/{doctor}/schedules/{schedule}', [DoctorController::class, 'deleteSchedule'])->name('doctors.schedules.destroy');
         });
 
         // Doctor-facing "my patients" view
@@ -68,6 +74,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('invoices/{invoice}/payment', [InvoiceController::class, 'recordPayment'])->name('invoices.payment');
         });
 
+        // Expenses - accounts + admin roles only (front-desk shouldn't record costs)
+        Route::middleware('role:Super Admin|Hospital Admin|Accountant')->group(function () {
+            Route::resource('expenses', ExpenseController::class)->except(['show']);
+        });
+
         // Contact form messages - front-desk facing
         Route::middleware('role:Super Admin|Hospital Admin|Receptionist')->group(function () {
             Route::resource('messages', ContactMessageController::class)->except(['create', 'store', 'edit', 'update']);
@@ -78,6 +89,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('beds', BedController::class);
             Route::post('beds/{bed}/assign', [BedController::class, 'assign'])->name('beds.assign');
             Route::post('beds/{bed}/discharge', [BedController::class, 'discharge'])->name('beds.discharge');
+        });
+
+        // IPD - patient admissions, tied to bed occupancy
+        Route::middleware('role:Super Admin|Hospital Admin|Receptionist|Nurse|Doctor')->group(function () {
+            Route::resource('admissions', AdmissionController::class);
+            Route::post('admissions/{admission}/discharge', [AdmissionController::class, 'discharge'])->name('admissions.discharge');
         });
 
         // Staff duty / task tracking board (nurses, ward boys, cleaners, etc.)
@@ -103,6 +120,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware('role:Super Admin|Hospital Admin')->group(function () {
             Route::resource('users', UserController::class);
             Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+        });
+
+        // My Profile - every authenticated staff member can manage their own account
+        Route::get('profile', [StaffProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [StaffProfileController::class, 'update'])->name('profile.update');
+        Route::put('profile/password', [StaffProfileController::class, 'updatePassword'])->name('profile.password.update');
+
+        // Reports & Analytics - revenue, appointments, doctor load, stock alerts
+        Route::middleware('role:Super Admin|Hospital Admin|Accountant')->group(function () {
+            Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
         });
 
         // In-app notification center - available to every authenticated staff role

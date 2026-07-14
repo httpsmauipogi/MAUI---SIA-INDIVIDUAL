@@ -80,11 +80,10 @@
 								<h5 class="h5-xs">Emergency Cases</h5>
 
 								<!-- Footer List -->
-								<h5 class="h5-xl blue-color">1-800-123-4560</h5>
+								<h5 class="h5-xl blue-color">{{ site_setting('emergency_phone', site_setting('phone', '1-800-123-4560')) }}</h5>
 
 								<!-- Text -->	
-								<p class="p-sm mt-15">Aliquam orci nullam undo tempor sapien gravida donec enim ipsum porta
-								   justo velna aucto magna
+								<p class="p-sm mt-15">Our emergency department is open 24/7. For life-threatening emergencies, please call the number above or visit us immediately.
 								</p> 																												
 
 							</div>

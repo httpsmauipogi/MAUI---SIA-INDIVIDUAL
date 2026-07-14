@@ -62,192 +62,50 @@
       					<nav class="wsmenu clearfix">
         					<ul class="wsmenu-list">
 
+							<!-- HOME -->
+							<li aria-haspopup="true"><a href="{{ route('frontend.home') }}">Home</a></li>
 
-						<!-- DROPDOWN MENU -->
-						<li aria-haspopup="true"><a href="{{ route('frontend.home') }}">Home</a></li>	<!-- END DROPDOWN MENU -->
+							<!-- ABOUT -->
+							<li aria-haspopup="true"><a href="#">About <span class="wsarrow"></span></a>
+								<ul class="sub-menu">
+									<li><a href="{{ route('frontend.about') }}">About Us</a></li>
+									<li><a href="{{ route('frontend.who-we-are') }}">Who We Are</a></li>
+									<li><a href="{{ route('frontend.services') }}">Our Services</a></li>
+								</ul>
+							</li>	<!-- END ABOUT -->
 
+							<!-- DEPARTMENTS -->
+							<li aria-haspopup="true"><a href="{{ route('frontend.departments') }}">Departments</a></li>
 
-						<!-- PAGES -->
-						<li aria-haspopup="true"><a href="#">Pages <span class="wsarrow"></span></a>
-							<div class="wsmegamenu clearfix">
-								<div class="container">
-									<div class="row">
+							<!-- DOCTORS -->
+							<li aria-haspopup="true"><a href="#">Doctors <span class="wsarrow"></span></a>
+								<ul class="sub-menu">
+									<li><a href="{{ route('frontend.doctors') }}">Meet the Doctors</a></li>
+									<li><a href="{{ route('frontend.timetable') }}">Doctors Timetable</a></li>
+								</ul>
+							</li>	<!-- END DOCTORS -->
 
-										<!-- MEGAMENU LINKS -->
-										<ul class="col-lg-3 col-md-12 col-xs-12 link-list">
-											<li class="title">About:</li>
-											<li><a href="{{ route('frontend.about') }}">About Us</a></li>
-											<li><a href="{{ route('frontend.who-we-are') }}">Who We Are</a></li>
-											<li><a href="{{ route('frontend.services') }}">Our Services</a></li>
-										</ul>
+							<!-- PATIENTS -->
+							<li aria-haspopup="true"><a href="#">Patients <span class="wsarrow"></span></a>
+								<ul class="sub-menu">
+									<li><a href="{{ route('frontend.appointment') }}">Book an Appointment</a></li>
+									<li><a href="{{ route('patient.register') }}">Patient Registration</a></li>
+									<li><a href="{{ route('frontend.faqs') }}">FAQs</a></li>
+									<li><a href="{{ route('frontend.terms') }}">Terms of Use</a></li>
+								</ul>
+							</li>	<!-- END PATIENTS -->
 
-										<!-- MEGAMENU LINKS -->
-										<ul class="col-lg-3 col-md-12 col-xs-12 link-list">
-											<li class="title">Medical:</li>
-											<li><a href="{{ route('frontend.departments') }}">Our Departments</a></li>
-											<li><a href="{{ route('frontend.doctors') }}">Meet the Doctors</a></li>
-											<li><a href="{{ route('frontend.timetable') }}">Doctors Timetable</a></li>
-										</ul>
+							<!-- GALLERY -->
+							<li aria-haspopup="true"><a href="{{ route('frontend.gallery') }}">Gallery</a></li>
 
-										<!-- MEGAMENU LINKS -->
-										<ul class="col-lg-3 col-md-12 col-xs-12 link-list">
-											<li class="title">Patient:</li>
-											<li><a href="{{ route('frontend.appointment') }}">Make an Appointment</a></li>
-											<li><a href="{{ route('patient.register') }}">Patient Registration</a></li>
-											<li><a href="{{ route('frontend.faqs') }}">FAQs</a></li>
-											<li><a href="{{ route('frontend.terms') }}">Terms of Use</a></li>
-										</ul>
+							<!-- BLOG -->
+							<li aria-haspopup="true"><a href="{{ route('frontend.blog') }}">Blog</a></li>
 
-										<!-- MEGAMENU LINKS -->
-										<ul class="col-lg-3 col-md-12 col-xs-12 link-list">
-											<li class="title">More:</li>
-											<li><a href="{{ route('frontend.gallery') }}">Our Gallery</a></li>
-											<li><a href="{{ route('frontend.blog') }}">Blog</a></li>
-											<li><a href="{{ route('frontend.contact') }}">Contact Us</a></li>
-										</ul>
+							<!-- CONTACT -->
+							<li aria-haspopup="true"><a href="{{ route('frontend.contact') }}">Contact</a></li>
 
-									</div>  <!-- End row -->
-								</div>  <!-- End container -->
-							</div>  <!-- End wsmegamenu -->
-						</li>	<!-- END PAGES -->
-
-
-					          	<!-- HALF MENU -->
-					          	<li aria-haspopup="true"><a href="#">Half Menu <span class="wsarrow"></span></a>
-					            	<div class="wsmegamenu clearfix halfmenu">
-					              		<div class="container-fluid">
-					                		<div class="row">
-
-					                			<!-- Links -->
-							                	<ul class="col-lg-6 col-md-12 col-xs-12 link-list">
-							                    	<li class="title">For Patients:</li>
-								                    <li><a href="#">Meet The Doctors</a></li>							                    
-								                    <li><a href="#">Patient Info Sheets</a></li>
-								                    <li><a href="#">Online Patients Portal</a></li>
-								                    <li><a href="#">Patients Testimonials</a></li>
-								                    <li><a href="#">Blog & Latest News</a></li>								                    
-							                  	</ul>
-
-							                  	<!-- Links -->
-								                <ul class="col-lg-6 col-md-12 col-xs-12 link-list">
-								                    <li class="title">Quick Links:</li>
-								                    <li><a href="#">Terms & Privacy Policy</a></li>
-								                    <li><a href="#">Donor Privacy Policy</a></li>
-								                    <li><a href="#">Workers Compensation</a></li>
-								                    <li><a href="#">Insurance Information</a></li>
-								                    <li><a href="#">After Hours Care</a></li>
-								                </ul>
-
-					                		</div>
-					              		</div>
-					            	</div>
-					          	</li>	<!-- END HALF MENU -->
-
-
-					          	<!-- MEGAMENU -->
-					          	<li aria-haspopup="true"><a href="#">Mega Menu <span class="wsarrow"></span></a>
-            						<div class="wsmegamenu clearfix">
-             							<div class="container">
-               								<div class="row">
-
-
-               									<!-- MEGAMENU QUICK LINKS -->
-               									<ul class="col-lg-3 col-md-12 col-xs-12 link-list">
-								                    <li class="title">Quick Links:</li>
-								                    <li><a href="#">For Referring Doctors</a></li>
-								                    <li><a href="#">Terms & Privacy Policy</a></li>
-								                    <li><a href="#">Donor Privacy Policy</a></li>								                    
-								                    <li><a href="#">Patient Info Sheets</a></li>
-								                    <li><a href="#">Online Patients Portal</a></li>
-								                    <li><a href="#">Insurance Information</a></li>
-								                    <li><a href="#">Patients Testimonials</a></li>
-								                </ul>
-
-
-								                <!-- MEGAMENU FEATURED NEWS -->
-								                <div class="col-lg-5 col-md-12 col-xs-12">
-
-								                	<!-- Title -->
-								                    <h3 class="title">Featured News:</h3>
-
-								                    <!-- Image -->
-								                    <div class="fluid-width-video-wrapper"><img src="{{ asset('frontend/images/blog/featured-news.jpg') }}" alt="featured-news" /></div>
-
-								                    <!-- Text -->
-								                    <h5 class="h5-xs"><a href="#">5 Benefits of integrative medicine</a></h5>
-								                    <p class="wsmwnutxt">Porta semper lacus cursus, feugiat primis ultrice in ligula risus auctor
-								                       tempus feugiat dolor impedit magna purus at pretium gravida donec
-								                    </p>
-
-								                </div>	<!-- END MEGAMENU FEATURED NEWS -->
-
-
-								                <!-- MEGAMENU LATEST NEWS -->
-								                <div class="col-lg-4 col-md-12 col-xs-12">
-
-								                	<!-- Title -->
-                    								<h3 class="title">Latest News:</h3>
-
-                    								<!-- Latest News -->
-                    								<ul class="latest-news">
-									
-														<!-- Post #1 -->
-														<li class="clearfix d-flex align-items-center">
-
-															<!-- Image -->
-															<img class="img-fluid" src="{{ asset('frontend/images/blog/latest-post-1.jpg') }}" alt="blog-post-preview" />
-
-															<!-- Text -->
-															<div class="post-summary">
-																<a href="{{ route('frontend.blog-single') }}">Etiam sapien risus ante auctor tempus accumsan an empor ...</a>
-																<p>43 Comments</p>
-															</div>
-
-														</li>
-														
-														<!-- Post #2 -->
-														<li class="clearfix d-flex align-items-center">
-
-															<!-- Image -->
-															<img class="img-fluid" src="{{ asset('frontend/images/blog/latest-post-2.jpg') }}" alt="blog-post-preview" />
-
-															<!-- Text -->
-															<div class="post-summary">
-																<a href="{{ route('frontend.blog-single') }}">Blandit tempor a sapien ipsum, porta risus auctor justo ...</a>
-																<p>38 Comments</p>
-															</div>
-
-														</li>
-														
-														<!-- Post #3 -->
-														<li class="clearfix d-flex align-items-center">
-
-															<!-- Image -->
-															<img class="img-fluid" src="{{ asset('frontend/images/blog/latest-post-3.jpg') }}" alt="blog-post-preview" />
-
-															<!-- Text -->
-															<div class="post-summary">
-																<a href="{{ route('frontend.blog-single') }}">Cursus risus auctor tempus risus laoreet turpis auctor varius ...</a>
-																<p>29 Comments</p>
-															</div>
-
-														</li>
-													</ul>
-                    							</div>	<!-- END MEGAMENU LATEST NEWS -->
-
-								                
-							                </div>  <!-- End row -->	
-							            </div>  <!-- End container -->	
-							        </div>  <!-- End wsmegamenu -->	
-							    </li>	<!-- END MEGAMENU -->
-
-							    
-							    <!-- SIMPLE NAVIGATION LINK -->
-							    <li class="nl-simple" aria-haspopup="true"><a href="#">Simple Link</a></li>
-
-							    <!-- NAVIGATION MENU BUTTON -->
-							    <li class="nl-simple header-btn" aria-haspopup="true"><a href="{{ route('frontend.appointment') }}">Make an Appointment</a></li>
-
+							<!-- NAVIGATION MENU BUTTON -->
+							<li class="nl-simple header-btn" aria-haspopup="true"><a href="{{ route('frontend.appointment') }}">Book Appointment</a></li>
 
         					</ul>
         				</nav>	<!-- END MAIN MENU -->

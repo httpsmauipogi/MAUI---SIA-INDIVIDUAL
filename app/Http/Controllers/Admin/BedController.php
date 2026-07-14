@@ -12,7 +12,7 @@ class BedController extends Controller
     public function index(Request $request)
     {
         $beds = Bed::query()
-            ->with('patient')
+            ->with(['patient', 'activeAdmission'])
             ->when($request->ward, fn ($q, $ward) => $q->where('ward', $ward))
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
             ->orderBy('ward')

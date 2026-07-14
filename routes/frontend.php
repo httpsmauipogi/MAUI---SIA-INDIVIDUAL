@@ -13,9 +13,12 @@ Route::middleware('maintenance')->group(function () {
     Route::get('/departments/{slug?}', [FrontendController::class, 'departmentSingle'])->name('frontend.department-single');
     Route::get('/doctors', [FrontendController::class, 'doctors'])->name('frontend.doctors');
     Route::get('/doctors/profile/{doctor}', [FrontendController::class, 'doctorShow'])->name('frontend.doctor.show');
+    Route::get('/doctors/{doctor}/book', [FrontendController::class, 'doctorBook'])->name('frontend.doctor.book');
+    Route::post('/doctors/{doctor}/book', [FrontendController::class, 'doctorBookStore'])->name('frontend.doctor.book.store');
     Route::get('/timetable', [FrontendController::class, 'timetable'])->name('frontend.timetable');
     Route::get('/appointment', [FrontendController::class, 'appointment'])->name('frontend.appointment');
     Route::post('/appointment', [FrontendController::class, 'appointmentStore'])->name('frontend.appointment.store');
+    Route::get('/appointment/confirmation/{appointment}', [FrontendController::class, 'appointmentConfirmation'])->name('frontend.appointment.confirmation');
     Route::get('/faqs', [FrontendController::class, 'faqs'])->name('frontend.faqs');
     Route::get('/terms', [FrontendController::class, 'terms'])->name('frontend.terms');
     Route::get('/gallery', [FrontendController::class, 'gallery'])->name('frontend.gallery');

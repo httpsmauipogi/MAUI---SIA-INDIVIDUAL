@@ -13,18 +13,44 @@ class Doctor extends Model
         'user_id',
         'doctor_id',
         'name',
+        'photo',
         'specialization',
         'qualification',
         'phone',
         'email',
         'experience_years',
         'consultation_fee',
+        'branch',
+        'floor',
+        'room_no',
         'status',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(DoctorSchedule::class)->orderByRaw(
+            "FIELD(day_of_week, 'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday')"
+        );
+    }
+
+    public function photoUrl(): string
+    {
+        return $this->photo
+            ? asset('storage/' . $this->photo)
+            : asset('frontend/images/doctor-' . (($this->id % 6) + 1) . '.jpg');
+    }
+
+    /**
+     * Whether this doctor has a schedule slot on the given day name (e.g. "Monday").
+     */
+    public function isAvailableOn(string $dayName): bool
+    {
+        return $this->schedules->contains(fn ($s) => $s->day_of_week === $dayName);
     }
 
     protected static function boot()

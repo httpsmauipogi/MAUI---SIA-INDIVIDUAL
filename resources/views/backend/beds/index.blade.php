@@ -96,21 +96,18 @@
                                             <a href="{{ route('admin.patients.show', $bed->patient) }}">{{ $bed->patient->name }}</a>
                                             <br><small class="text-muted">Since {{ $bed->occupied_at?->format('d M, h:i A') }}</small>
                                         </p>
-                                        <form action="{{ route('admin.beds.discharge', $bed) }}" method="POST" onsubmit="return confirm('Discharge patient and free this bed?');">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-soft-success w-100">Discharge</button>
-                                        </form>
+                                        @if ($bed->activeAdmission)
+                                            <a href="{{ route('admin.admissions.show', $bed->activeAdmission) }}" class="btn btn-sm btn-soft-success w-100">Manage Admission / Discharge</a>
+                                        @else
+                                            <form action="{{ route('admin.beds.discharge', $bed) }}" method="POST" onsubmit="return confirm('Discharge patient and free this bed?');">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-soft-success w-100">Discharge</button>
+                                            </form>
+                                        @endif
                                     @elseif ($bed->status === 'Available')
-                                        <form action="{{ route('admin.beds.assign', $bed) }}" method="POST" class="d-flex gap-1">
-                                            @csrf
-                                            <select name="patient_id" class="form-select form-select-sm" required>
-                                                <option value="">Assign patient...</option>
-                                                @foreach (\App\Models\Patient::where('status', 'Active')->orderBy('name')->get() as $patient)
-                                                    <option value="{{ $patient->id }}">{{ $patient->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            <button type="submit" class="btn btn-sm btn-soft-primary">Go</button>
-                                        </form>
+                                        <a href="{{ route('admin.admissions.create', ['bed_id' => $bed->id]) }}" class="btn btn-sm btn-soft-primary w-100">
+                                            <i class="las la-plus"></i> Admit Patient
+                                        </a>
                                     @endif
 
                                     <div class="d-flex gap-1 mt-2">
