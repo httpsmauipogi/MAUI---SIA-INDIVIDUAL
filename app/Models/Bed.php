@@ -10,6 +10,7 @@ class Bed extends Model
     use HasFactory;
 
     protected $fillable = [
+        'branch_id',
         'bed_number',
         'ward',
         'floor',
@@ -17,6 +18,11 @@ class Bed extends Model
         'patient_id',
         'occupied_at',
     ];
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 
     protected function casts(): array
     {

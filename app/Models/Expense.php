@@ -10,6 +10,7 @@ class Expense extends Model
     use HasFactory;
 
     protected $fillable = [
+        'branch_id',
         'category',
         'description',
         'amount',
@@ -18,6 +19,11 @@ class Expense extends Model
         'notes',
         'recorded_by',
     ];
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 
     protected function casts(): array
     {

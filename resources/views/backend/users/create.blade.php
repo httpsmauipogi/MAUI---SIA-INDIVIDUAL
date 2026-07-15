@@ -82,6 +82,17 @@
                             @error('department') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="branch_id">Branch</label>
+                            <select class="form-control @error('branch_id') is-invalid @enderror" id="branch_id" name="branch_id">
+                                <option value="">-- Select Branch --</option>
+                                @foreach ($branches as $id => $branchName)
+                                    <option value="{{ $id }}" {{ (string) old('branch_id') === (string) $id ? 'selected' : '' }}>{{ $branchName }}</option>
+                                @endforeach
+                            </select>
+                            @error('branch_id') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+
                         <div class="col-md-4 mb-3">
                             <label class="form-label" for="joining_date">Joining Date</label>
                             <input type="date" class="form-control @error('joining_date') is-invalid @enderror" id="joining_date" name="joining_date" value="{{ old('joining_date') }}">

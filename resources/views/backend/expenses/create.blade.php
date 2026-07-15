@@ -51,6 +51,19 @@
                             <label class="form-label" for="notes">Notes <span class="text-muted">(optional)</span></label>
                             <textarea class="form-control" id="notes" name="notes" rows="2">{{ old('notes') }}</textarea>
                         </div>
+
+                        @if (! $isBranchRestricted)
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="branch_id">Branch</label>
+                            <select class="form-control @error('branch_id') is-invalid @enderror" id="branch_id" name="branch_id">
+                                <option value="">-- Select Branch --</option>
+                                @foreach (\App\Models\Branch::where('status', 'Active')->orderBy('name')->pluck('name', 'id') as $id => $branchName)
+                                    <option value="{{ $id }}" {{ (string) old('branch_id') === (string) $id ? 'selected' : '' }}>{{ $branchName }}</option>
+                                @endforeach
+                            </select>
+                            @error('branch_id') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+                        @endif
                     </div>
 
                     <div class="d-flex gap-2">

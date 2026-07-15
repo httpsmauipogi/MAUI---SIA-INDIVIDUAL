@@ -88,9 +88,14 @@
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label class="form-label" for="branch">Branch</label>
-                            <input type="text" class="form-control @error('branch') is-invalid @enderror" id="branch" name="branch" value="{{ old('branch', $doctor->branch) }}" placeholder="e.g. Main Branch, Uttara">
-                            @error('branch') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                            <label class="form-label" for="branch_id">Branch</label>
+                            <select class="form-control @error('branch_id') is-invalid @enderror" id="branch_id" name="branch_id">
+                                <option value="">-- Select Branch --</option>
+                                @foreach ($branches as $id => $branchName)
+                                    <option value="{{ $id }}" {{ (string) old('branch_id', $doctor->branch_id) === (string) $id ? 'selected' : '' }}>{{ $branchName }}</option>
+                                @endforeach
+                            </select>
+                            @error('branch_id') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="col-md-4 mb-3">

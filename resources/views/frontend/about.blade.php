@@ -23,10 +23,11 @@
 						<div class="row d-flex align-items-center">
 
 
+						<!-- Managed from Admin > Page Content > About Us > Welcome Block -->
 						<!-- INFO IMAGE -->
 						<div class="col-lg-6">
 							<div class="info-4-img text-center wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="info-image">
+								<img class="img-fluid" src="{{ $welcomeCard->image_path ? asset('storage/' . $welcomeCard->image_path) : asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="info-image">
 							</div>
 						</div>
 
@@ -36,32 +37,21 @@
 							<div class="txt-block pc-30 wow fadeInUp" data-wow-delay="0.4s">
 
 								<!-- Section ID -->	
-					 			<span class="section-id blue-color">Welcome to Healix HMS</span>
+					 			<span class="section-id blue-color">{{ $welcomeCard->subtitle }}</span>
 
 								<!-- Title -->
-								<h3 class="h3-md steelblue-color">Clinic with Innovative Approach to Treatment</h3>
+								<h3 class="h3-md steelblue-color">{{ $welcomeCard->title }}</h3>
 
 								<!-- Text -->
-								<p>An enim nullam tempor sapien gravida donec pretium ipsum  porta justo integer at  odio
-								   velna vitae auctor integer congue magna purus pretium ligula rutrum luctus ultrice aliquam
-								   a augue suscipit
-								</p>
-
-								<!-- Text -->
-								<p>Porta semper lacus cursus, feugiat primis ultrice in ligula risus auctor tempus feugiat
-								   dolor lacinia cubilia curae integer congue leo metus, eu mollislorem primis in orci integer
-								   metus mollis faucibus. An enim nullam tempor sapien gravida donec pretium and ipsum porta
-								   justo integer at velna vitae auctor integer congue
-								</p>
+								<div>{!! nl2br(e($welcomeCard->description)) !!}</div>
 
 								<!-- Singnature -->
 								<div class="singnature mt-35">
 
 									<!-- Text -->
-									<p class="p-small mb-15">Randon Pexon, Head of Clinic</p>
+									<p class="p-small mb-15">{{ $welcomeCard->link_text }}</p>
 
 									<!-- Singnature Image -->
-									<!-- Recommended sizes for Retina Ready displays is 400x68px; -->
 									<img class="img-fluid" src="{{ asset('frontend/images/signature.png') }}" width="200" height="34" alt="signature-image" />	
 
 								</div>
@@ -79,68 +69,39 @@
 						<div class="row d-flex align-items-center">
 
 
+							<!-- Managed from Admin > Page Content > About Us > Quality Care -->
 							<!-- INFO TEXT -->	
 							<div class="col-lg-6">
 								<div class="txt-block pc-30 wow fadeInUp" data-wow-delay="0.4s">
 
 									<!-- Section ID -->	
-					 				<span class="section-id blue-color">Highest Quality Care</span>
+					 				<span class="section-id blue-color">{{ $qualityCareCard->subtitle }}</span>
 
 									<!-- Title -->
-									<h3 class="h3-md steelblue-color">Complete Medical Solutions in One Place</h3>
+									<h3 class="h3-md steelblue-color">{{ $qualityCareCard->title }}</h3>
 
 									<!-- Text -->
-									<p class="mb-30">An enim nullam tempor sapien gravida donec enim ipsum blandit
-									   porta justo integer odio velna vitae auctor integer congue magna at pretium 
-									   purus pretium ligula rutrum itae laoreet augue posuere and curae integer 
-									   congue leo metus mollis primis and mauris
-									</p>
+									<p class="mb-30">{{ $qualityCareCard->description }}</p>
 
 									<!-- Options List -->
 									<div class="row">
 
 										<div class="col-xl-6">
-
-											<!-- Option #1 -->
-											<div class="box-list">							
+											@foreach ($qualityCarePoints->slice(0, 3) as $point)
+											<div class="box-list">
 												<div class="box-list-icon blue-color"><i class="fas fa-angle-double-right"></i></div>
-												<p class="p-sm">Nemo ipsam egestas volute and turpis dolores quaerat</p>							
+												<p class="p-sm">{{ $point->title }}</p>
 											</div>
-
-											<!-- Option #2 -->
-											<div class="box-list">	
-												<div class="box-list-icon blue-color"><i class="fas fa-angle-double-right"></i></div>
-												<p class="p-sm">Magna luctus tempor</p>				
-											</div>
-
-											<!-- Option #3 -->
-											<div class="box-list">	
-												<div class="box-list-icon blue-color"><i class="fas fa-angle-double-right"></i></div>
-												<p class="p-sm">An enim nullam tempor at pretium purus blandit</p>				
-											</div>
-
+											@endforeach
 										</div>
 
 										<div class="col-xl-6">
-
-											<!-- Option #4 -->
-											<div class="box-list">	
+											@foreach ($qualityCarePoints->slice(3, 3) as $point)
+											<div class="box-list">
 												<div class="box-list-icon blue-color"><i class="fas fa-angle-double-right"></i></div>
-												<p class="p-sm">Magna luctus tempor blandit a vitae suscipit mollis</p>				
+												<p class="p-sm">{{ $point->title }}</p>
 											</div>
-
-											<!-- Option #5 -->
-											<div class="box-list">							
-												<div class="box-list-icon blue-color"><i class="fas fa-angle-double-right"></i></div>
-												<p class="p-sm">Nemo ipsam egestas volute turpis dolores quaerat</p>							
-											</div>
-
-											<!-- Option #6 -->
-											<div class="box-list">	
-												<div class="box-list-icon blue-color"><i class="fas fa-angle-double-right"></i></div>
-												<p class="p-sm">An enim nullam tempor</p>				
-											</div>
-
+											@endforeach
 										</div>
 
 									</div>	<!-- End Options List -->
@@ -152,7 +113,7 @@
 							<!-- INFO IMAGE -->
 							<div class="col-lg-6">
 								<div class="info-4-img text-center wow fadeInUp" data-wow-delay="0.6s">
-									<img class="img-fluid" src="{{ asset('frontend/images/emergency_help_700x800.jpg') }}" alt="info-image">
+									<img class="img-fluid" src="{{ $qualityCareCard->image_path ? asset('storage/' . $qualityCareCard->image_path) : asset('frontend/images/emergency_help_700x800.jpg') }}" alt="info-image">
 								</div>
 							</div>
 
@@ -174,65 +135,16 @@
 					<div class="row">
 
 
-						<!-- STATISTIC BLOCK #1 -->
-						<div class="col-md-6 col-lg-3">						
-							<div class="statistic-block icon-lg wow fadeInUp" data-wow-delay="0.4s">
-
-								<!-- Icon  -->
-								<span class="flaticon-062-cardiogram-3"></span>
-
-								<!-- Text -->
-								<h5 class="statistic-number">9,<span class="count-element">632</span></h5>
-								<p class="txt-400">Happy Patients</p>																			
-													
-							</div>								
+						<!-- Managed from Admin > Page Content > About Us > Statistics -->
+						@foreach ($aboutStatCards as $card)
+						<div class="col-md-6 col-lg-3">
+							<div class="statistic-block icon-lg wow fadeInUp" data-wow-delay="{{ 0.4 + ($loop->index * 0.2) }}s">
+								<span class="{{ $card->icon ?: 'flaticon-137-doctor' }}"></span>
+								<h5 class="statistic-number"><span class="count-element">{{ $card->title }}</span></h5>
+								<p class="txt-400">{{ $card->subtitle }}</p>
+							</div>
 						</div>
-
-
-						<!-- STATISTIC BLOCK #2 -->
-						<div class="col-md-6 col-lg-3">								
-							<div class="statistic-block icon-lg wow fadeInUp" data-wow-delay="0.6s">
-
-								<!-- Icon  -->
-								<span class="flaticon-137-doctor"></span>
-
-								<!-- Text -->
-								<h5 class="statistic-number"><span class="count-element">178</span></h5>	
-								<p class="txt-400">Qualified Doctors</p>										
-																		
-							</div>							
-						</div>
-
-
-						<!-- STATISTIC BLOCK #3 -->
-						<div class="col-md-6 col-lg-3">					
-							<div class="statistic-block icon-lg wow fadeInUp" data-wow-delay="0.8s">	
-
-								<!-- Icon  -->
-								<span class="flaticon-065-hospital-bed"></span>
-
-								<!-- Text -->
-								<h5 class="statistic-number"><span class="count-element">864</span></h5>
-								<p class="txt-400">Clinic Rooms</p>									
-
-							</div>						
-						</div>
-					
-
-						<!-- STATISTIC BLOCK #4 -->
-						<div class="col-md-6 col-lg-3">						
-							<div class="statistic-block icon-lg wow fadeInUp" data-wow-delay="1s">	
-
-								<!-- Icon  -->
-								<span class="flaticon-040-placeholder"></span>
-
-								<!-- Text -->	
-								<h5 class="statistic-number"><span class="count-element">473</span></h5>
-								<p class="txt-400">Local Partners</p>				
-								
-							</div>						
-						</div>
-
+						@endforeach
 
 					</div>  <!-- End row -->
 				</div>	 <!-- End container -->		
@@ -328,160 +240,22 @@
 							<div class="row">
 
 
-								<!-- SERVICE BOX #1 -->
+								<!-- Managed from Admin > Page Content > About Us > Feature Boxes -->
+								@foreach ($featureBoxCards as $card)
 			 					<div class="col-md-6">
-			 						<div class="sbox-7 icon-xs wow fadeInUp" data-wow-delay="0.4s">
-			 							<a href="{{ route('frontend.services') }}">
-
-				 							<!-- Icon -->
-											<span class="flaticon-137-doctor blue-color"></span>
-
-											<!-- Text -->
+			 						<div class="sbox-7 icon-xs wow fadeInUp" data-wow-delay="{{ $loop->even ? '0.6s' : '0.4s' }}">
+			 							<a href="{{ $card->link_url ?: route('frontend.services') }}">
+				 							<span class="{{ $card->icon ?: 'flaticon-137-doctor' }} blue-color"></span>
 											<div class="sbox-7-txt">
-				
-												<!-- Title -->
-												<h5 class="h5-sm steelblue-color">Top Level Doctors</h5>
-													
-												<!-- Text -->
-												<p class="p-sm">Porta semper lacus at cursus primis ultrice in ligula risus an
-												   auctor tempus feugiat dolor
-												</p>
-
+												<h5 class="h5-sm steelblue-color">{{ $card->title }}</h5>
+												@if ($card->description)
+												<p class="p-sm">{{ $card->description }}</p>
+												@endif
 											</div>
-
 										</a>
 			 						</div>
-			 					</div>  <!-- END SERVICE BOX #1 -->
-
-
-			 					<!-- SERVICE BOX #2 -->
-			 					<div class="col-md-6">
-			 						<div class="sbox-7 icon-xs wow fadeInUp" data-wow-delay="0.6s">
-			 							<a href="{{ route('frontend.services') }}">
-
-				 							<!-- Icon -->
-											<span class="flaticon-076-microscope blue-color"></span>
-
-											<!-- Text -->
-											<div class="sbox-7-txt">
-				
-												<!-- Title -->
-												<h5 class="h5-sm steelblue-color">Modern Equipment</h5>
-													
-												<!-- Text -->
-												<p class="p-sm">Porta semper lacus at cursus primis ultrice in ligula risus an
-												   auctor tempus feugiat dolor
-												</p>
-
-											</div>
-
-				 						</a>
-			 						</div>
-			 					</div>  <!-- END SERVICE BOX #2 -->
-
-
-			 					<!-- SERVICE BOX #3 -->
-			 					<div class="col-md-6">
-			 						<div class="sbox-7 icon-xs wow fadeInUp" data-wow-delay="0.8s">
-			 							<a href="{{ route('frontend.services') }}">
-
-				 							<!-- Icon -->
-											<span class="flaticon-065-hospital-bed blue-color"></span>
-
-											<!-- Text -->
-											<div class="sbox-7-txt">
-				
-												<!-- Title -->
-												<h5 class="h5-sm steelblue-color">Qualified Facilities</h5>
-													
-												<!-- Text -->
-												<p class="p-sm">Porta semper lacus at cursus primis ultrice in ligula risus an
-												   auctor tempus feugiat dolor
-												</p>
-
-											</div>
-
-				 						</a>
-			 						</div>
-			 					</div>  <!-- END SERVICE BOX #3-->
-
-
-			 					<!-- SERVICE BOX #4 -->
-			 					<div class="col-md-6">
-			 						<div class="sbox-7 icon-xs wow fadeInUp" data-wow-delay="1s">
-			 							<a href="{{ route('frontend.services') }}">
-
-				 							<!-- Icon -->
-											<span class="flaticon-058-blood-transfusion-2 blue-color"></span>
-
-											<!-- Text -->
-											<div class="sbox-7-txt">
-				
-												<!-- Title -->
-												<h5 class="h5-sm steelblue-color">Professional Services</h5>
-													
-												<!-- Text -->
-												<p class="p-sm">Porta semper lacus at cursus primis ultrice in ligula risus an
-												   auctor tempus feugiat dolor
-												</p>
-
-											</div>
-
-				 						</a>
-			 						</div>
-			 					</div>  <!-- END SERVICE BOX #4 -->
-
-
-			 					<!-- SERVICE BOX #5 -->
-			 					<div class="col-md-6">
-			 						<div class="sbox-7 icon-xs wow fadeInUp" data-wow-delay="1.2s">
-			 							<a href="{{ route('frontend.services') }}">
-
-				 							<!-- Icon -->
-											<span class="flaticon-141-clinic-history blue-color"></span>
-
-											<!-- Text -->
-											<div class="sbox-7-txt">
-				
-												<!-- Title -->
-												<h5 class="h5-sm steelblue-color">Medical Counseling</h5>
-													
-												<!-- Text -->
-												<p class="p-sm">Porta semper lacus at cursus primis ultrice in ligula risus an
-												   auctor tempus feugiat dolor
-												</p>
-
-											</div>
-
-				 						</a>
-			 						</div>
-			 					</div>  <!-- END SERVICE BOX #5 -->
-
-
-			 					<!-- SERVICE BOX #6 -->
-			 					<div class="col-md-6">
-			 						<div class="sbox-7 icon-xs wow fadeInUp" data-wow-delay="1.4s">
-			 							<a href="{{ route('frontend.services') }}">
-
-				 							<!-- Icon -->
-											<span class="flaticon-008-ambulance-6 blue-color"></span>
-
-											<!-- Text -->
-											<div class="sbox-7-txt">
-				
-												<!-- Title -->
-												<h5 class="h5-sm steelblue-color">Emergency Help</h5>
-													
-												<!-- Text -->
-												<p class="p-sm">Porta semper lacus at cursus primis ultrice in ligula risus an
-												   auctor tempus feugiat dolor
-												</p>
-
-											</div>
-
-										</a>
-			 						</div>
-			 					</div>  <!-- END SERVICE BOX #6 -->
+			 					</div>	<!-- END SERVICE BOX -->
+								@endforeach
 
 			 					
 	 						</div>
@@ -492,45 +266,33 @@
 						<div class="col-lg-4">
 							<div class="services-7-table blue-table mb-30 wow fadeInUp" data-wow-delay="0.6s">
 
-								<!-- Title -->
-								<h4 class="h4-xs">Opening Hours:</h4>
+								<!-- Managed from Admin > Page Content > About Us > Opening Hours -->
+								<h4 class="h4-xs">{{ $openingHoursCard->title ?: 'Opening Hours:' }}</h4>
 
-								<!-- Text -->
-								<p class="p-sm">Porta semper lacus cursus and feugiat primis ultrice ligula risus auctor
-								   tempus feugiat and dolor lacinia cursus
-								</p>
+								@if ($openingHoursCard->description)
+								<p class="p-sm">{{ $openingHoursCard->description }}</p>
+								@endif
 
 								<!-- Table -->
 								<table class="table">
 									<tbody>
-									    <tr>
-									      	<td>Mon – Wed</td>
+										@foreach ($aboutOpeningHours as $row)
+									    <tr class="{{ $loop->last ? 'last-tr' : '' }}">
+									      	<td>{{ $row->title }}</td>
 									      	<td> - </td>
-									      	<td class="text-right">9:00 AM - 7:00 PM</td>
+									      	<td class="text-right">{{ $row->subtitle }}</td>
 									    </tr>
-									    <tr>
-									      	<td>Thursday</td>
-									      	<td> - </td>
-									      	<td class="text-right">9:00 AM - 6:30 PM</td>
-									    </tr>
-									     <tr>
-									      	<td>Friday</td>
-									      	<td> - </td>
-									      	<td class="text-right">9:00 AM - 6:00 PM</td>
-									    </tr>
-									    <tr class="last-tr">
-									      	<td>Sun - Sun</td>
-									      	<td>-</td>
-									      	<td class="text-right">CLOSED</td>
-									   	 </tr>
+										@endforeach
 									  </tbody>
 								</table>
 
-								<!-- Title -->
-								<h5 class="h5-sm">Need a personal health plan?</h5>
+								@if ($openingHoursCard->link_text)
+								<h5 class="h5-sm">{{ $openingHoursCard->link_text }}</h5>
+								@endif
 
-								<!-- Text -->
-								<p class="p-sm">Porta semper lacus cursus, and feugiat primis ultrice ligula at risus auctor</p>
+								@if ($openingHoursCard->link_url)
+								<p class="p-sm">{{ $openingHoursCard->link_url }}</p>
+								@endif
 
 							</div>	
 						</div>	<!-- END INFO TABLE -->
@@ -549,18 +311,12 @@
 				<div class="container">
 
 
+					<!-- Managed from Admin > Page Content > About Us > Closing Banner -->
 					<!-- SECTION TITLE -->	
 					<div class="row">	
 						<div class="col-lg-10 offset-lg-1 section-title">		
-
-							<!-- Title 	-->	
-							<h3 class="h3-md steelblue-color">Certified and Experienced Doctors</h3>	
-
-							<!-- Text -->
-							<p>Aliquam a augue suscipit, luctus neque purus ipsum neque dolor primis libero at tempus, 
-							   blandit posuere ligula varius congue cursus porta feugiat
-							</p>
-										
+							<h3 class="h3-md steelblue-color">{{ $closingBannerCard->title }}</h3>	
+							<p>{{ $closingBannerCard->description }}</p>
 						</div> 
 					</div>
 
@@ -569,7 +325,7 @@
 					<div class="row">
 						<div class="col-lg-10 offset-lg-1">
 							<div class="banner-5-img wow fadeInUp" data-wow-delay="0.4s">
-								<img class="img-fluid" src="{{ asset('frontend/images/image-07.png') }}" alt="banner-image" />
+								<img class="img-fluid" src="{{ $closingBannerCard->image_path ? asset('storage/' . $closingBannerCard->image_path) : asset('frontend/images/image-07.png') }}" alt="banner-image" />
 							</div>
 						</div>
 					</div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Medicine;
 use App\Models\MedicineStockLog;
 use App\Models\Patient;
+use App\Services\NotifyService;
 use Illuminate\Http\Request;
 
 class MedicineController extends Controller
@@ -13,6 +14,7 @@ class MedicineController extends Controller
     public function index(Request $request)
     {
         $medicines = Medicine::query()
+            ->tap(fn ($q) => $this->scopeToBranch($q))
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('generic_name', 'like', "%{$search}%");
@@ -23,11 +25,13 @@ class MedicineController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        $base = fn () => Medicine::query()->tap(fn ($q) => $this->scopeToBranch($q));
+
         $counts = [
-            'total' => Medicine::count(),
-            'lowStock' => Medicine::whereColumn('stock_quantity', '<=', 'reorder_level')->count(),
-            'expiringSoon' => Medicine::whereNotNull('expiry_date')->where('expiry_date', '<=', now()->addDays(30))->count(),
-            'outOfStock' => Medicine::where('stock_quantity', 0)->count(),
+            'total' => $base()->count(),
+            'lowStock' => $base()->whereColumn('stock_quantity', '<=', 'reorder_level')->count(),
+            'expiringSoon' => $base()->whereNotNull('expiry_date')->where('expiry_date', '<=', now()->addDays(30))->count(),
+            'outOfStock' => $base()->where('stock_quantity', 0)->count(),
         ];
 
         return view('backend.pharmacy.index', compact('medicines', 'counts'));
@@ -35,13 +39,16 @@ class MedicineController extends Controller
 
     public function create()
     {
-        return view('backend.pharmacy.create');
+        $isBranchRestricted = $this->isBranchRestricted();
+
+        return view('backend.pharmacy.create', compact('isBranchRestricted'));
     }
 
     public function store(Request $request)
     {
         $validated = $this->validateMedicine($request);
         $validated['status'] = 'Active';
+        $validated['branch_id'] = $this->currentBranchId() ?? $validated['branch_id'] ?? null;
 
         Medicine::create($validated);
 
@@ -50,6 +57,8 @@ class MedicineController extends Controller
 
     public function show(Medicine $medicine)
     {
+        $this->authorizeBranchAccess($medicine);
+
         $logs = $medicine->stockLogs()->with(['patient', 'user'])->latest()->paginate(15);
 
         return view('backend.pharmacy.show', compact('medicine', 'logs'));
@@ -57,13 +66,21 @@ class MedicineController extends Controller
 
     public function edit(Medicine $medicine)
     {
+        $this->authorizeBranchAccess($medicine);
+
         return view('backend.pharmacy.edit', compact('medicine'));
     }
 
     public function update(Request $request, Medicine $medicine)
     {
+        $this->authorizeBranchAccess($medicine);
+
         $validated = $this->validateMedicine($request);
         $validated['status'] = $request->input('status', 'Active');
+
+        if ($this->isBranchRestricted()) {
+            $validated['branch_id'] = $medicine->branch_id;
+        }
 
         $medicine->update($validated);
 
@@ -72,6 +89,8 @@ class MedicineController extends Controller
 
     public function destroy(Medicine $medicine)
     {
+        $this->authorizeBranchAccess($medicine);
+
         $medicine->delete();
 
         return redirect()->route('admin.pharmacy.index')->with('status', 'Medicine removed successfully.');
@@ -79,6 +98,8 @@ class MedicineController extends Controller
 
     public function restock(Request $request, Medicine $medicine)
     {
+        $this->authorizeBranchAccess($medicine);
+
         $validated = $request->validate([
             'quantity' => ['required', 'integer', 'min:1'],
             'notes' => ['nullable', 'string', 'max:255'],
@@ -99,11 +120,18 @@ class MedicineController extends Controller
 
     public function dispense(Request $request, Medicine $medicine)
     {
+        $this->authorizeBranchAccess($medicine);
+
         $validated = $request->validate([
             'quantity' => ['required', 'integer', 'min:1', 'max:' . $medicine->stock_quantity],
             'patient_id' => ['nullable', 'exists:patients,id'],
             'notes' => ['nullable', 'string', 'max:255'],
         ]);
+
+        if (! empty($validated['patient_id']) && ($branchId = $this->currentBranchId())) {
+            $patient = Patient::find($validated['patient_id']);
+            abort_if($patient?->branch_id !== $branchId, 403, 'That patient belongs to a different branch.');
+        }
 
         $medicine->decrement('stock_quantity', $validated['quantity']);
 
@@ -118,7 +146,7 @@ class MedicineController extends Controller
 
         $medicine->refresh();
         if ($medicine->stock_quantity <= $medicine->reorder_level) {
-            \App\Services\NotifyService::roles(
+            NotifyService::roles(
                 ['Super Admin', 'Hospital Admin', 'Pharmacist'],
                 'Low stock alert',
                 $medicine->name . ' has dropped to ' . $medicine->stock_quantity . ' ' . $medicine->unit . '(s), at or below reorder level.',
@@ -144,6 +172,14 @@ class MedicineController extends Controller
             'reorder_level' => ['required', 'integer', 'min:0'],
             'unit_price' => ['required', 'numeric', 'min:0'],
             'expiry_date' => ['nullable', 'date'],
+            'branch_id' => ['nullable', 'exists:branches,id'],
         ]);
+    }
+
+    private function authorizeBranchAccess(Medicine $medicine): void
+    {
+        $branchId = $this->currentBranchId();
+
+        abort_if($branchId && $medicine->branch_id !== $branchId, 403, 'This medicine belongs to a different branch.');
     }
 }

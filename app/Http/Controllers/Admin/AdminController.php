@@ -29,13 +29,15 @@ class AdminController extends Controller
     }
 
     /**
-     * Hospital-wide overview - Super Admin, Hospital Admin, Receptionist,
-     * Pharmacist, Lab Technician, Accountant all share this view for now.
+     * Hospital-wide overview - Super Admin and Hospital Admin see every
+     * branch; Branch Admin (and any other branch-restricted role sharing
+     * this view) automatically sees only their own branch's numbers.
      */
     private function hospitalDashboard()
     {
         $weekStart = Carbon::today()->subDays(6);
         $appointmentsByDay = Appointment::selectRaw('DATE(appointment_date) as day, COUNT(*) as total')
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->where('appointment_date', '>=', $weekStart)
             ->where('appointment_date', '<=', today())
             ->groupBy('day')
@@ -49,31 +51,37 @@ class AdminController extends Controller
             $weeklyCounts[] = (int) ($appointmentsByDay[$date->format('Y-m-d')] ?? 0);
         }
 
+        $patients = fn () => Patient::query()->tap(fn ($q) => $this->scopeToBranch($q));
+        $doctors = fn () => Doctor::query()->tap(fn ($q) => $this->scopeToBranch($q));
+        $appointments = fn () => Appointment::query()->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'));
+        $beds = fn () => Bed::query()->tap(fn ($q) => $this->scopeToBranch($q));
+
         return view('backend.dashboard', [
-            'totalPatients' => Patient::count(),
-            'activePatients' => Patient::where('status', 'Active')->count(),
-            'totalDoctors' => Doctor::count(),
-            'activeDoctors' => Doctor::where('status', 'Active')->count(),
-            'todaysAppointments' => Appointment::with(['patient', 'doctor'])
+            'currentBranch' => $this->currentBranchId() ? auth()->user()->branch : null,
+            'totalPatients' => $patients()->count(),
+            'activePatients' => $patients()->where('status', 'Active')->count(),
+            'totalDoctors' => $doctors()->count(),
+            'activeDoctors' => $doctors()->where('status', 'Active')->count(),
+            'todaysAppointments' => $appointments()->with(['patient', 'doctor'])
                 ->whereDate('appointment_date', today())
                 ->orderBy('appointment_time')
                 ->limit(5)
                 ->get(),
             'bedCounts' => [
-                'total' => Bed::count(),
-                'available' => Bed::where('status', 'Available')->count(),
-                'occupied' => Bed::where('status', 'Occupied')->count(),
+                'total' => $beds()->count(),
+                'available' => $beds()->where('status', 'Available')->count(),
+                'occupied' => $beds()->where('status', 'Occupied')->count(),
             ],
-            'onDutyCount' => DutyLog::where('status', 'Ongoing')->count(),
+            'onDutyCount' => DutyLog::tap(fn ($q) => $this->scopeToBranchVia($q, 'user'))->where('status', 'Ongoing')->count(),
             'weeklyLabels' => $weeklyLabels,
             'weeklyCounts' => $weeklyCounts,
             'appointmentStatusCounts' => [
-                'Scheduled' => Appointment::where('status', 'Scheduled')->count(),
-                'Completed' => Appointment::where('status', 'Completed')->count(),
-                'Cancelled' => Appointment::where('status', 'Cancelled')->count(),
+                'Scheduled' => $appointments()->where('status', 'Scheduled')->count(),
+                'Completed' => $appointments()->where('status', 'Completed')->count(),
+                'Cancelled' => $appointments()->where('status', 'Cancelled')->count(),
             ],
-            'recentPatients' => Patient::latest()->limit(5)->get(),
-            'recentInvoices' => Invoice::with('patient')->latest('invoice_date')->limit(5)->get(),
+            'recentPatients' => $patients()->latest()->limit(5)->get(),
+            'recentInvoices' => Invoice::with('patient')->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))->latest('invoice_date')->limit(5)->get(),
         ]);
     }
 

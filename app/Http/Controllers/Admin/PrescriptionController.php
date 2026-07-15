@@ -14,6 +14,7 @@ class PrescriptionController extends Controller
     {
         $prescriptions = Prescription::query()
             ->with(['patient', 'doctor'])
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->when($request->search, function ($query, $search) {
                 $query->where('prescription_no', 'like', "%{$search}%")
                     ->orWhereHas('patient', fn ($q) => $q->where('name', 'like', "%{$search}%"));
@@ -27,8 +28,8 @@ class PrescriptionController extends Controller
 
     public function create()
     {
-        $patients = Patient::orderBy('name')->get();
-        $doctors = Doctor::where('status', 'Active')->orderBy('name')->get();
+        $patients = Patient::tap(fn ($q) => $this->scopeToBranch($q))->orderBy('name')->get();
+        $doctors = Doctor::where('status', 'Active')->tap(fn ($q) => $this->scopeToBranch($q))->orderBy('name')->get();
 
         return view('backend.prescriptions.create', compact('patients', 'doctors'));
     }
@@ -36,6 +37,7 @@ class PrescriptionController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validatePrescription($request);
+        $this->guardSameBranch($validated['patient_id'], $validated['doctor_id']);
 
         $prescription = Prescription::create($validated);
 
@@ -44,6 +46,8 @@ class PrescriptionController extends Controller
 
     public function show(Prescription $prescription)
     {
+        $this->authorizeBranchAccess($prescription);
+
         $prescription->load('patient', 'doctor', 'appointment');
 
         return view('backend.prescriptions.show', compact('prescription'));
@@ -51,15 +55,20 @@ class PrescriptionController extends Controller
 
     public function edit(Prescription $prescription)
     {
-        $patients = Patient::orderBy('name')->get();
-        $doctors = Doctor::orderBy('name')->get();
+        $this->authorizeBranchAccess($prescription);
+
+        $patients = Patient::tap(fn ($q) => $this->scopeToBranch($q))->orderBy('name')->get();
+        $doctors = Doctor::tap(fn ($q) => $this->scopeToBranch($q))->orderBy('name')->get();
 
         return view('backend.prescriptions.edit', compact('prescription', 'patients', 'doctors'));
     }
 
     public function update(Request $request, Prescription $prescription)
     {
+        $this->authorizeBranchAccess($prescription);
+
         $validated = $this->validatePrescription($request);
+        $this->guardSameBranch($validated['patient_id'], $validated['doctor_id']);
 
         $prescription->update($validated);
 
@@ -68,6 +77,8 @@ class PrescriptionController extends Controller
 
     public function destroy(Prescription $prescription)
     {
+        $this->authorizeBranchAccess($prescription);
+
         $prescription->delete();
 
         return redirect()->route('admin.prescriptions.index')->with('status', 'Prescription deleted successfully.');
@@ -90,5 +101,21 @@ class PrescriptionController extends Controller
             'medicines.*.duration' => ['nullable', 'string', 'max:100'],
             'medicines.*.instructions' => ['nullable', 'string', 'max:255'],
         ]);
+    }
+
+    private function authorizeBranchAccess(Prescription $prescription): void
+    {
+        $branchId = $this->currentBranchId();
+
+        abort_if($branchId && $prescription->patient?->branch_id !== $branchId, 403, 'This prescription belongs to a different branch.');
+    }
+
+    private function guardSameBranch(int $patientId, int $doctorId): void
+    {
+        if ($branchId = $this->currentBranchId()) {
+            $patient = Patient::find($patientId);
+            $doctor = Doctor::find($doctorId);
+            abort_if($patient?->branch_id !== $branchId || $doctor?->branch_id !== $branchId, 403, 'You can only write prescriptions within your own branch.');
+        }
     }
 }

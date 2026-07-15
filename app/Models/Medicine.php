@@ -10,6 +10,7 @@ class Medicine extends Model
     use HasFactory;
 
     protected $fillable = [
+        'branch_id',
         'name',
         'generic_name',
         'category',
@@ -21,6 +22,11 @@ class Medicine extends Model
         'expiry_date',
         'status',
     ];
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 
     protected function casts(): array
     {

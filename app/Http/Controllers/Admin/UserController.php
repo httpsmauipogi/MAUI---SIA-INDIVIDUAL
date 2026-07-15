@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\User;
 use App\Services\NotifyService;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class UserController extends Controller
     {
         $users = User::query()
             ->with('roles')
+            ->tap(fn ($q) => $this->scopeToBranch($q))
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
@@ -33,21 +35,23 @@ class UserController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $roles = Role::orderBy('name')->get();
+        $roles = $this->assignableRoles();
 
         return view('backend.users.index', compact('users', 'roles'));
     }
 
     public function create()
     {
-        $roles = Role::orderBy('name')->get();
+        $roles = $this->assignableRoles();
+        $branches = $this->selectableBranches();
 
-        return view('backend.users.create', compact('roles'));
+        return view('backend.users.create', compact('roles', 'branches'));
     }
 
     public function store(Request $request)
     {
         $validated = $this->validated($request);
+        $this->guardAssignableRole($validated['role']);
 
         $user = User::create([
             'employee_id' => $this->generateEmployeeId(),
@@ -57,6 +61,7 @@ class UserController extends Controller
             'phone' => $validated['phone'] ?? null,
             'designation' => $validated['designation'] ?? null,
             'department' => $validated['department'] ?? null,
+            'branch_id' => $this->currentBranchId() ?? $validated['branch_id'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'date_of_birth' => $validated['date_of_birth'] ?? null,
             'joining_date' => $validated['joining_date'] ?? null,
@@ -86,6 +91,8 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        $this->authorizeBranchAccess($user);
+
         $user->load('roles');
 
         return view('backend.users.show', compact('user'));
@@ -93,14 +100,20 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = Role::orderBy('name')->get();
+        $this->authorizeBranchAccess($user);
 
-        return view('backend.users.edit', compact('user', 'roles'));
+        $roles = $this->assignableRoles();
+        $branches = $this->selectableBranches();
+
+        return view('backend.users.edit', compact('user', 'roles', 'branches'));
     }
 
     public function update(Request $request, User $user)
     {
+        $this->authorizeBranchAccess($user);
+
         $validated = $this->validated($request, $user);
+        $this->guardAssignableRole($validated['role']);
 
         $user->update([
             'name' => $validated['name'],
@@ -109,6 +122,7 @@ class UserController extends Controller
             'phone' => $validated['phone'] ?? null,
             'designation' => $validated['designation'] ?? null,
             'department' => $validated['department'] ?? null,
+            'branch_id' => $this->currentBranchId() ?? $validated['branch_id'] ?? $user->branch_id,
             'gender' => $validated['gender'] ?? null,
             'date_of_birth' => $validated['date_of_birth'] ?? null,
             'joining_date' => $validated['joining_date'] ?? null,
@@ -131,6 +145,8 @@ class UserController extends Controller
 
     public function toggleStatus(User $user)
     {
+        $this->authorizeBranchAccess($user);
+
         if ($user->id === auth()->id()) {
             return back()->with('status', "You can't change the status of your own account.");
         }
@@ -142,6 +158,8 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        $this->authorizeBranchAccess($user);
+
         if ($user->id === auth()->id()) {
             return back()->with('status', "You can't delete your own account while logged in.");
         }
@@ -165,6 +183,7 @@ class UserController extends Controller
             'phone' => ['nullable', 'string', 'max:30'],
             'designation' => ['nullable', 'string', 'max:255'],
             'department' => ['nullable', 'string', 'max:255'],
+            'branch_id' => ['nullable', 'exists:branches,id'],
             'gender' => ['nullable', 'in:Male,Female,Other'],
             'date_of_birth' => ['nullable', 'date'],
             'joining_date' => ['nullable', 'date'],
@@ -173,6 +192,47 @@ class UserController extends Controller
             'status' => ['nullable', 'in:Active,Inactive'],
             'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
+    }
+
+    /**
+     * Branch Admins can only create/edit operational staff - not other
+     * admins. Only Super Admin / Hospital Admin can assign Super Admin,
+     * Hospital Admin, or Branch Admin roles.
+     */
+    private function assignableRoles()
+    {
+        $query = Role::orderBy('name');
+
+        if ($this->isBranchRestricted()) {
+            $query->whereNotIn('name', ['Super Admin', 'Hospital Admin', 'Branch Admin']);
+        }
+
+        return $query->get();
+    }
+
+    private function guardAssignableRole(string $role): void
+    {
+        if ($this->isBranchRestricted() && in_array($role, ['Super Admin', 'Hospital Admin', 'Branch Admin'])) {
+            abort(403, 'You are not allowed to assign that role.');
+        }
+    }
+
+    private function selectableBranches()
+    {
+        $query = Branch::where('status', 'Active')->orderBy('name');
+
+        if ($branchId = $this->currentBranchId()) {
+            $query->where('id', $branchId);
+        }
+
+        return $query->pluck('name', 'id');
+    }
+
+    private function authorizeBranchAccess(User $user): void
+    {
+        $branchId = $this->currentBranchId();
+
+        abort_if($branchId && $user->branch_id !== $branchId, 403, 'This staff member belongs to a different branch.');
     }
 
     private function generateEmployeeId(): string

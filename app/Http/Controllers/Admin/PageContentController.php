@@ -40,7 +40,16 @@ class PageContentController extends Controller
             'about' => [
                 'label' => 'About Us',
                 'route' => 'frontend.about',
-                'groups' => ['features' => 'Feature Cards'],
+                'groups' => [
+                    'welcome' => 'Welcome Block (1 card - text + signature + image)',
+                    'quality_care' => 'Quality Care Intro (1 card - text + image)',
+                    'quality_care_points' => 'Quality Care - 6 Bullet Points',
+                    'stats' => 'Statistics Counters',
+                    'feature_boxes' => 'Feature Boxes (6 icon boxes)',
+                    'opening_hours_intro' => 'Opening Hours - Intro/Footer text (1 card: Title=heading, Description=intro text, Link Text=footer heading, Link URL=footer text)',
+                    'opening_hours' => 'Opening Hours Table (Title=Day, Subtitle=Hours)',
+                    'closing_banner' => 'Closing Banner (1 card - title, text, image)',
+                ],
             ],
             'who-we-are' => [
                 'label' => 'Who We Are',

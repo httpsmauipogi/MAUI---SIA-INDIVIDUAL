@@ -28,6 +28,8 @@ class User extends Authenticatable
         'phone',
         'designation',
         'department',
+        'branch',
+        'branch_id',
         'gender',
         'date_of_birth',
         'joining_date',
@@ -81,5 +83,10 @@ class User extends Authenticatable
         return $this->avatar
             ? asset('storage/' . $this->avatar)
             : 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=0d6efd&color=fff';
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 }

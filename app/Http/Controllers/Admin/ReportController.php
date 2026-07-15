@@ -21,17 +21,22 @@ class ReportController extends Controller
         $to = $request->filled('to') ? Carbon::parse($request->to)->endOfDay() : now()->endOfDay();
 
         // Revenue summary
-        $invoicesInRange = Invoice::whereBetween('invoice_date', [$from, $to])->get();
+        $invoicesInRange = Invoice::whereBetween('invoice_date', [$from, $to])
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
+            ->get();
         $totalRevenue = $invoicesInRange->sum('total');
         $totalCollected = $invoicesInRange->sum('paid_amount');
         $totalDue = $invoicesInRange->sum('due_amount');
 
-        $totalExpenses = Expense::whereBetween('expense_date', [$from, $to])->sum('amount');
+        $totalExpenses = Expense::whereBetween('expense_date', [$from, $to])
+            ->tap(fn ($q) => $this->scopeToBranch($q))
+            ->sum('amount');
         $netProfit = $totalCollected - $totalExpenses;
 
         // Daily revenue trend
         $revenueByDay = Invoice::selectRaw('DATE(invoice_date) as day, SUM(total) as total')
             ->whereBetween('invoice_date', [$from, $to])
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->groupBy('day')
             ->pluck('total', 'day');
 
@@ -44,7 +49,9 @@ class ReportController extends Controller
         }
 
         // Appointments summary
-        $appointmentsInRange = Appointment::whereBetween('appointment_date', [$from, $to])->get();
+        $appointmentsInRange = Appointment::whereBetween('appointment_date', [$from, $to])
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
+            ->get();
         $appointmentStatusCounts = [
             'Scheduled' => $appointmentsInRange->where('status', 'Scheduled')->count(),
             'Completed' => $appointmentsInRange->where('status', 'Completed')->count(),
@@ -54,6 +61,7 @@ class ReportController extends Controller
         // Doctor-wise patient load (appointments per doctor in range)
         $doctorLoad = Appointment::with('doctor')
             ->whereBetween('appointment_date', [$from, $to])
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->get()
             ->groupBy('doctor_id')
             ->map(function ($group) {
@@ -67,13 +75,18 @@ class ReportController extends Controller
             ->values();
 
         // New patient registrations in range
-        $newPatients = Patient::whereBetween('created_at', [$from, $to])->count();
+        $newPatients = Patient::whereBetween('created_at', [$from, $to])
+            ->tap(fn ($q) => $this->scopeToBranch($q))
+            ->count();
 
         // Lab orders summary
-        $labOrdersInRange = LabOrder::whereBetween('ordered_date', [$from, $to])->get();
+        $labOrdersInRange = LabOrder::whereBetween('ordered_date', [$from, $to])
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
+            ->get();
 
         // Low stock medicines (not date-scoped, always "right now")
         $lowStockMedicines = Medicine::whereColumn('stock_quantity', '<=', 'reorder_level')
+            ->tap(fn ($q) => $this->scopeToBranch($q))
             ->orderBy('stock_quantity')
             ->limit(10)
             ->get();
@@ -92,7 +105,7 @@ class ReportController extends Controller
             'appointmentStatusCounts' => $appointmentStatusCounts,
             'doctorLoad' => $doctorLoad,
             'newPatients' => $newPatients,
-            'totalDoctors' => Doctor::count(),
+            'totalDoctors' => Doctor::tap(fn ($q) => $this->scopeToBranch($q))->count(),
             'labOrdersCount' => $labOrdersInRange->count(),
             'labOrdersCompleted' => $labOrdersInRange->where('status', 'Completed')->count(),
             'lowStockMedicines' => $lowStockMedicines,

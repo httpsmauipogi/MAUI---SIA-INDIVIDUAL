@@ -4,6 +4,12 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
+                @if ($currentBranch)
+                <div class="alert alert-info d-flex align-items-center mb-3">
+                    <i class="iconoir-hospital me-2 fs-20"></i>
+                    Showing data for <strong class="mx-1">{{ $currentBranch->name }}</strong> branch only.
+                </div>
+                @endif
                 <div class="row">
                     <div class="col-md-6 col-lg-3">
                         <div class="card bg-corner-img">

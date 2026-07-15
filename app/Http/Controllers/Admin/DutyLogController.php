@@ -12,12 +12,14 @@ class DutyLogController extends Controller
     public function index(Request $request)
     {
         $ongoing = DutyLog::with('user')
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'user'))
             ->where('status', 'Ongoing')
             ->when($request->location, fn ($q, $loc) => $q->where('location', 'like', "%{$loc}%"))
             ->orderBy('started_at', 'desc')
             ->get();
 
         $completedToday = DutyLog::with('user')
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'user'))
             ->where('status', 'Completed')
             ->whereDate('ended_at', today())
             ->orderBy('ended_at', 'desc')

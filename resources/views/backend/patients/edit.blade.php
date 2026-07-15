@@ -74,6 +74,19 @@
                             <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3">{{ old('address', $patient->address) }}</textarea>
                             @error('address') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                         </div>
+
+                        @if ($branches->count() > 1)
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="branch_id">Branch</label>
+                            <select class="form-control @error('branch_id') is-invalid @enderror" id="branch_id" name="branch_id">
+                                <option value="">-- Select Branch --</option>
+                                @foreach ($branches as $id => $branchName)
+                                    <option value="{{ $id }}" {{ (string) old('branch_id', $patient->branch_id) === (string) $id ? 'selected' : '' }}>{{ $branchName }}</option>
+                                @endforeach
+                            </select>
+                            @error('branch_id') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+                        @endif
                     </div>
 
                     <div class="d-flex gap-2">

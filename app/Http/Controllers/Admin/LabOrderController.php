@@ -15,6 +15,7 @@ class LabOrderController extends Controller
     {
         $orders = LabOrder::query()
             ->with(['patient', 'labTest'])
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
             ->when($request->search, function ($q, $search) {
                 $q->where('order_no', 'like', "%{$search}%")
@@ -24,10 +25,12 @@ class LabOrderController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $orderBase = fn () => LabOrder::query()->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'));
+
         $counts = [
-            'pending' => LabOrder::where('status', 'Pending')->count(),
-            'processing' => LabOrder::whereIn('status', ['Sample Collected', 'Processing'])->count(),
-            'completedToday' => LabOrder::where('status', 'Completed')->whereDate('result_date', today())->count(),
+            'pending' => $orderBase()->where('status', 'Pending')->count(),
+            'processing' => $orderBase()->whereIn('status', ['Sample Collected', 'Processing'])->count(),
+            'completedToday' => $orderBase()->where('status', 'Completed')->whereDate('result_date', today())->count(),
         ];
 
         return view('backend.lab.orders.index', compact('orders', 'counts'));
@@ -35,8 +38,8 @@ class LabOrderController extends Controller
 
     public function create()
     {
-        $patients = Patient::orderBy('name')->get();
-        $doctors = Doctor::where('status', 'Active')->orderBy('name')->get();
+        $patients = Patient::tap(fn ($q) => $this->scopeToBranch($q))->orderBy('name')->get();
+        $doctors = Doctor::where('status', 'Active')->tap(fn ($q) => $this->scopeToBranch($q))->orderBy('name')->get();
         $labTests = LabTest::where('status', 'Active')->orderBy('name')->get();
 
         return view('backend.lab.orders.create', compact('patients', 'doctors', 'labTests'));
@@ -51,6 +54,11 @@ class LabOrderController extends Controller
             'ordered_date' => ['required', 'date'],
         ]);
 
+        if ($branchId = $this->currentBranchId()) {
+            $patient = Patient::find($validated['patient_id']);
+            abort_if($patient?->branch_id !== $branchId, 403, 'You can only order tests for patients in your own branch.');
+        }
+
         $labTest = LabTest::findOrFail($validated['lab_test_id']);
         $validated['price'] = $labTest->price;
         $validated['status'] = 'Pending';
@@ -62,6 +70,8 @@ class LabOrderController extends Controller
 
     public function show(LabOrder $labOrder)
     {
+        $this->authorizeBranchAccess($labOrder);
+
         $labOrder->load(['patient', 'doctor', 'labTest']);
 
         return view('backend.lab.orders.show', compact('labOrder'));
@@ -69,11 +79,15 @@ class LabOrderController extends Controller
 
     public function edit(LabOrder $labOrder)
     {
+        $this->authorizeBranchAccess($labOrder);
+
         return view('backend.lab.orders.edit', compact('labOrder'));
     }
 
     public function update(Request $request, LabOrder $labOrder)
     {
+        $this->authorizeBranchAccess($labOrder);
+
         $validated = $request->validate([
             'status' => ['required', 'in:Pending,Sample Collected,Processing,Completed,Cancelled'],
             'result_notes' => ['nullable', 'string'],
@@ -99,8 +113,17 @@ class LabOrderController extends Controller
 
     public function destroy(LabOrder $labOrder)
     {
+        $this->authorizeBranchAccess($labOrder);
+
         $labOrder->delete();
 
         return redirect()->route('admin.lab-orders.index')->with('status', 'Lab order removed successfully.');
+    }
+
+    private function authorizeBranchAccess(LabOrder $labOrder): void
+    {
+        $branchId = $this->currentBranchId();
+
+        abort_if($branchId && $labOrder->patient?->branch_id !== $branchId, 403, 'This lab order belongs to a different branch.');
     }
 }

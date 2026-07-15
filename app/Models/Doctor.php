@@ -21,6 +21,7 @@ class Doctor extends Model
         'experience_years',
         'consultation_fee',
         'branch',
+        'branch_id',
         'floor',
         'room_no',
         'status',
@@ -29,6 +30,11 @@ class Doctor extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function schedules()

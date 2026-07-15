@@ -39,13 +39,13 @@
                         </li><!--end nav-item-->
                         @endrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Receptionist|Doctor')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Receptionist|Doctor')
                         <li class="menu-label mt-2">
                             <span>Patient Care</span>
                         </li>
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Receptionist|Doctor')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Receptionist|Doctor')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarPatients" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarPatients">
@@ -55,7 +55,7 @@
                             <div class="collapse" id="sidebarPatients">
                                 <ul class="nav flex-column">
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.patients.index') }}">All Patients</a></li>
-                                    @hasanyrole('Super Admin|Hospital Admin|Receptionist')
+                                    @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Receptionist')
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.patients.create') }}">Add Patient</a></li>
                                     @endhasanyrole
                                 </ul>
@@ -63,7 +63,7 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarDoctors" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarDoctors">
@@ -79,7 +79,7 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Receptionist|Doctor')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Receptionist|Doctor')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarAppointments" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarAppointments">
@@ -89,11 +89,11 @@
                             <div class="collapse" id="sidebarAppointments">
                                 <ul class="nav flex-column">
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.appointments.index') }}">All Appointments</a></li>
-                                    @hasanyrole('Super Admin|Hospital Admin|Receptionist')
+                                    @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Receptionist')
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.appointments.create') }}">New Appointment</a></li>
                                     @endhasanyrole
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.appointments.index') }}">OPD (Outpatient)</a></li>
-                                    @hasanyrole('Super Admin|Hospital Admin|Receptionist|Nurse|Doctor')
+                                    @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Receptionist|Nurse|Doctor')
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.admissions.index') }}">IPD (Admissions)</a></li>
                                     @endhasanyrole
                                 </ul>
@@ -101,7 +101,7 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Doctor|Pharmacist')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Doctor|Pharmacist')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarPrescriptions" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarPrescriptions">
@@ -111,7 +111,7 @@
                             <div class="collapse" id="sidebarPrescriptions">
                                 <ul class="nav flex-column">
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.prescriptions.index') }}">All Prescriptions</a></li>
-                                    @hasanyrole('Super Admin|Hospital Admin|Doctor')
+                                    @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Doctor')
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.prescriptions.create') }}">New Prescription</a></li>
                                     @endhasanyrole
                                 </ul>
@@ -119,13 +119,13 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Pharmacist|Lab Technician|Nurse|Ward Boy|Accountant')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Pharmacist|Lab Technician|Nurse|Ward Boy|Accountant')
                         <li class="menu-label mt-2">
                             <span>Operations</span>
                         </li>
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Pharmacist')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Pharmacist')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarPharmacy" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarPharmacy">
@@ -141,7 +141,7 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Lab Technician')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Lab Technician')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarLaboratory" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarLaboratory">
@@ -159,7 +159,7 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Receptionist|Nurse|Ward Boy')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Receptionist|Nurse|Ward Boy')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.beds.*') ? 'active' : '' }}" href="{{ route('admin.beds.index') }}">
                                 <i class="iconoir-bed menu-icon"></i>
@@ -168,7 +168,7 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Accountant|Receptionist')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Accountant|Receptionist')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarBilling" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarBilling">
@@ -178,7 +178,7 @@
                             <div class="collapse" id="sidebarBilling">
                                 <ul class="nav flex-column">
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.invoices.index') }}">Invoices</a></li>
-                                    @hasanyrole('Super Admin|Hospital Admin|Accountant')
+                                    @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Accountant')
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.invoices.create') }}">New Invoice</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.expenses.index') }}">Expenses</a></li>
                                     @endhasanyrole
@@ -187,22 +187,13 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Pharmacist')
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="iconoir-archive menu-icon"></i>
-                                <span>Inventory</span>
-                            </a>
-                        </li><!--end nav-item-->
-                        @endhasanyrole
-
-                        @hasanyrole('Super Admin|Hospital Admin')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin')
                         <li class="menu-label mt-2">
                             <span>Organization</span>
                         </li>
                         @endhasanyrole
 
-                        @role('Super Admin')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarStaff" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarStaff">
@@ -216,9 +207,9 @@
                                 </ul>
                             </div><!--end sidebarStaff-->
                         </li><!--end nav-item-->
-                        @endrole
+                        @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Nurse|Ward Boy|Cleaner')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Nurse|Ward Boy|Cleaner')
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarDutyBoard" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarDutyBoard">
@@ -234,7 +225,7 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Accountant')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Accountant')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
                                 <i class="iconoir-stats-report menu-icon"></i>
@@ -243,7 +234,7 @@
                         </li><!--end nav-item-->
                         @endhasanyrole
 
-                        @hasanyrole('Super Admin|Hospital Admin|Receptionist')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Receptionist')
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.messages.index') }}">
                                 <i class="iconoir-mail-in menu-icon"></i>
@@ -257,7 +248,7 @@
 
                         @role('Super Admin')
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {{ request()->routeIs('admin.branches.*') ? 'active' : '' }}" href="{{ route('admin.branches.index') }}">
                                 <i class="iconoir-hospital menu-icon"></i>
                                 <span>Hospitals / Branches</span>
                             </a>
@@ -275,7 +266,7 @@
                             </a>
                         </li><!--end nav-item-->
 
-                        @hasanyrole('Super Admin|Hospital Admin|Doctor|Nurse|Ward Boy|Cleaner|Receptionist|Pharmacist|Lab Technician|Accountant')
+                        @hasanyrole('Super Admin|Hospital Admin|Branch Admin|Doctor|Nurse|Ward Boy|Cleaner|Receptionist|Pharmacist|Lab Technician|Accountant')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}" href="{{ route('admin.notifications.index') }}">
                                 <i class="iconoir-bell menu-icon"></i>

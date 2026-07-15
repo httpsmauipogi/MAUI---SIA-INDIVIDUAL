@@ -32,7 +32,19 @@ class FrontendController extends Controller
 
     public function about()
     {
-        return view('frontend.about');
+        $welcomeCard = PageCard::forPage('about', 'welcome')->first() ?? new PageCard();
+        $qualityCareCard = PageCard::forPage('about', 'quality_care')->first() ?? new PageCard();
+        $qualityCarePoints = PageCard::forPage('about', 'quality_care_points');
+        $aboutStatCards = PageCard::forPage('about', 'stats');
+        $featureBoxCards = PageCard::forPage('about', 'feature_boxes');
+        $openingHoursCard = PageCard::forPage('about', 'opening_hours_intro')->first() ?? new PageCard();
+        $aboutOpeningHours = PageCard::forPage('about', 'opening_hours');
+        $closingBannerCard = PageCard::forPage('about', 'closing_banner')->first() ?? new PageCard();
+
+        return view('frontend.about', compact(
+            'welcomeCard', 'qualityCareCard', 'qualityCarePoints', 'aboutStatCards',
+            'featureBoxCards', 'openingHoursCard', 'aboutOpeningHours', 'closingBannerCard'
+        ));
     }
 
     public function whoWeAre()
@@ -180,18 +192,17 @@ class FrontendController extends Controller
         $dayName = \Carbon\Carbon::parse($date)->format('l');
         $slot = $doctor->schedules()->where('day_of_week', $dayName)->first();
 
-        $serial = \App\Models\Appointment::nextSerialFor($doctor->id, $date);
-
-        $appointment = \App\Models\Appointment::create([
+        $appointment = \App\Models\Appointment::createWithSerial([
             'patient_id' => $patient->id,
             'doctor_id' => $doctor->id,
             'appointment_date' => $date,
             'appointment_time' => $slot->start_time ?? '10:00',
-            'serial_number' => $serial,
             'reason' => $reason,
             'status' => 'Scheduled',
             'notes' => $notes,
         ]);
+
+        $serial = $appointment->serial_number;
 
         if ($doctor->user) {
             \App\Services\NotifyService::send(

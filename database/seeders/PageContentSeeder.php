@@ -138,6 +138,72 @@ class PageContentSeeder extends Seeder
         ]];
         $this->seedCards('home', 'cta_banner', $ctaBanner);
 
+        // About Us page
+        $aboutWelcome = [[
+            'subtitle' => 'Welcome to Healix HMS',
+            'title' => 'Clinic with Innovative Approach to Treatment',
+            'description' => "An enim nullam tempor sapien gravida donec pretium ipsum porta justo integer at odio velna vitae auctor integer congue magna purus pretium ligula rutrum luctus ultrice aliquam a augue suscipit.\n\nPorta semper lacus cursus, feugiat primis ultrice in ligula risus auctor tempus feugiat dolor lacinia cubilia curae integer congue leo metus, eu mollis lorem primis in orci integer metus mollis faucibus.",
+            'link_text' => 'Randon Pexon, Head of Clinic',
+        ]];
+        $this->seedCards('about', 'welcome', $aboutWelcome);
+
+        $aboutQualityCare = [[
+            'subtitle' => 'Highest Quality Care',
+            'title' => 'Complete Medical Solutions in One Place',
+            'description' => 'An enim nullam tempor sapien gravida donec enim ipsum blandit porta justo integer odio velna vitae auctor integer congue magna at pretium purus pretium ligula rutrum itae laoreet augue posuere.',
+        ]];
+        $this->seedCards('about', 'quality_care', $aboutQualityCare);
+
+        $aboutQualityPoints = [
+            ['title' => 'Comprehensive diagnostic and treatment services'],
+            ['title' => 'Compassionate, patient-first approach'],
+            ['title' => 'State-of-the-art medical equipment'],
+            ['title' => 'Experienced, board-certified specialists'],
+            ['title' => 'Round-the-clock emergency care'],
+            ['title' => 'Affordable, transparent pricing'],
+        ];
+        $this->seedCards('about', 'quality_care_points', $aboutQualityPoints);
+
+        $aboutStats = [
+            ['icon' => 'flaticon-062-cardiogram-3', 'title' => '9,632', 'subtitle' => 'Happy Patients'],
+            ['icon' => 'flaticon-137-doctor', 'title' => '178', 'subtitle' => 'Qualified Doctors'],
+            ['icon' => 'flaticon-065-hospital-bed', 'title' => '864', 'subtitle' => 'Clinic Rooms'],
+            ['icon' => 'flaticon-040-placeholder', 'title' => '473', 'subtitle' => 'Local Partners'],
+        ];
+        $this->seedCards('about', 'stats', $aboutStats);
+
+        $aboutFeatureBoxes = [
+            ['icon' => 'flaticon-137-doctor', 'title' => 'Top Level Doctors', 'description' => 'Porta semper lacus at cursus primis ultrice in ligula risus an auctor tempus feugiat dolor.'],
+            ['icon' => 'flaticon-076-microscope', 'title' => 'Modern Equipment', 'description' => 'Porta semper lacus at cursus primis ultrice in ligula risus an auctor tempus feugiat dolor.'],
+            ['icon' => 'flaticon-065-hospital-bed', 'title' => 'Qualified Facilities', 'description' => 'Porta semper lacus at cursus primis ultrice in ligula risus an auctor tempus feugiat dolor.'],
+            ['icon' => 'flaticon-058-blood-transfusion-2', 'title' => 'Emergency Help', 'description' => 'Porta semper lacus at cursus primis ultrice in ligula risus an auctor tempus feugiat dolor.'],
+            ['icon' => 'flaticon-048-lungs', 'title' => 'Health Checkups', 'description' => 'Porta semper lacus at cursus primis ultrice in ligula risus an auctor tempus feugiat dolor.'],
+            ['icon' => 'flaticon-031-scanner', 'title' => 'Diagnostic Services', 'description' => 'Porta semper lacus at cursus primis ultrice in ligula risus an auctor tempus feugiat dolor.'],
+        ];
+        $this->seedCards('about', 'feature_boxes', $aboutFeatureBoxes);
+
+        $aboutOpeningHoursIntro = [[
+            'title' => 'Opening Hours:',
+            'description' => 'Porta semper lacus cursus and feugiat primis ultrice ligula risus auctor tempus feugiat and dolor lacinia cursus.',
+            'link_text' => 'Need a personal health plan?',
+            'link_url' => 'Porta semper lacus cursus, and feugiat primis ultrice ligula at risus auctor',
+        ]];
+        $this->seedCards('about', 'opening_hours_intro', $aboutOpeningHoursIntro);
+
+        $aboutOpeningHours = [
+            ['title' => 'Mon – Wed', 'subtitle' => '9:00 AM - 7:00 PM'],
+            ['title' => 'Thursday', 'subtitle' => '9:00 AM - 6:30 PM'],
+            ['title' => 'Friday', 'subtitle' => '9:00 AM - 6:00 PM'],
+            ['title' => 'Sun - Sun', 'subtitle' => 'CLOSED'],
+        ];
+        $this->seedCards('about', 'opening_hours', $aboutOpeningHours);
+
+        $aboutClosingBanner = [[
+            'title' => 'Certified and Experienced Doctors',
+            'description' => 'Aliquam a augue suscipit, luctus neque purus ipsum neque dolor primis libero at tempus, blandit posuere ligula varius congue cursus porta feugiat.',
+        ]];
+        $this->seedCards('about', 'closing_banner', $aboutClosingBanner);
+
         // Departments page cards
         $departments = [
             ['title' => 'Pediatrics', 'icon' => 'flaticon-083-stethoscope', 'description' => 'Porta semper lacus at cursus primis ultrice in ligula risus an auctor tempus feugiat dolor.', 'link_url' => '/services'],

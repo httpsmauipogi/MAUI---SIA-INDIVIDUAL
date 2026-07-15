@@ -37,6 +37,7 @@
                                 <th>Contact</th>
                                 <th>Role</th>
                                 <th>Designation</th>
+                                <th>Branch</th>
                                 <th>Status</th>
                                 <th>Joined</th>
                                 <th class="text-end">Action</th>
@@ -66,6 +67,7 @@
                                         @endforelse
                                     </td>
                                     <td>{{ $user->designation ?? '—' }}</td>
+                                    <td>{{ $user->branch?->name ?? '—' }}</td>
                                     <td>
                                         @if ($user->status === 'Active')
                                             <span class="badge bg-success-subtle text-success">Active</span>

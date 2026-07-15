@@ -13,6 +13,7 @@ class InvoiceController extends Controller
     {
         $invoices = Invoice::query()
             ->with('patient')
+            ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->when($request->status, fn ($query, $status) => $query->where('status', $status))
             ->when($request->search, function ($query, $search) {
                 $query->where('invoice_no', 'like', "%{$search}%")
@@ -27,7 +28,7 @@ class InvoiceController extends Controller
 
     public function create()
     {
-        $patients = Patient::orderBy('name')->get();
+        $patients = Patient::tap(fn ($q) => $this->scopeToBranch($q))->orderBy('name')->get();
 
         return view('backend.invoices.create', compact('patients'));
     }
@@ -35,6 +36,7 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validateInvoice($request);
+        $this->guardPatientBranch($validated['patient_id']);
 
         $invoice = Invoice::create($validated);
         $invoice->refreshStatus();
@@ -44,6 +46,8 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
+        $this->authorizeBranchAccess($invoice);
+
         $invoice->load('patient', 'appointment');
 
         return view('backend.invoices.show', compact('invoice'));
@@ -51,14 +55,19 @@ class InvoiceController extends Controller
 
     public function edit(Invoice $invoice)
     {
-        $patients = Patient::orderBy('name')->get();
+        $this->authorizeBranchAccess($invoice);
+
+        $patients = Patient::tap(fn ($q) => $this->scopeToBranch($q))->orderBy('name')->get();
 
         return view('backend.invoices.edit', compact('invoice', 'patients'));
     }
 
     public function update(Request $request, Invoice $invoice)
     {
+        $this->authorizeBranchAccess($invoice);
+
         $validated = $this->validateInvoice($request);
+        $this->guardPatientBranch($validated['patient_id']);
 
         $invoice->update($validated);
         $invoice->refreshStatus();
@@ -68,6 +77,8 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice)
     {
+        $this->authorizeBranchAccess($invoice);
+
         $invoice->delete();
 
         return redirect()->route('admin.invoices.index')->with('status', 'Invoice deleted successfully.');
@@ -75,6 +86,8 @@ class InvoiceController extends Controller
 
     public function recordPayment(Request $request, Invoice $invoice)
     {
+        $this->authorizeBranchAccess($invoice);
+
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:0.01', 'max:' . $invoice->due_amount],
         ]);
@@ -111,5 +124,20 @@ class InvoiceController extends Controller
         $validated['total'] = max($subtotal - $discount, 0);
 
         return $validated;
+    }
+
+    private function authorizeBranchAccess(Invoice $invoice): void
+    {
+        $branchId = $this->currentBranchId();
+
+        abort_if($branchId && $invoice->patient?->branch_id !== $branchId, 403, 'This invoice belongs to a different branch.');
+    }
+
+    private function guardPatientBranch(int $patientId): void
+    {
+        if ($branchId = $this->currentBranchId()) {
+            $patient = Patient::find($patientId);
+            abort_if($patient?->branch_id !== $branchId, 403, 'You can only invoice patients in your own branch.');
+        }
     }
 }

@@ -41,16 +41,37 @@ class Appointment extends Model
 
     /**
      * The next serial number for this doctor on this date - resets to 1
-     * every day since it only counts appointments on that exact date.
+     * every day. Uses MAX(serial_number)+1 rather than counting rows, so a
+     * cancelled appointment never leaves a "gap" that a later booking could
+     * duplicate.
      */
     public static function nextSerialFor(int $doctorId, string $date): int
     {
-        $count = static::where('doctor_id', $doctorId)
+        $max = static::where('doctor_id', $doctorId)
             ->whereDate('appointment_date', $date)
-            ->where('status', '!=', 'Cancelled')
-            ->count();
+            ->max('serial_number');
 
-        return $count + 1;
+        return ((int) $max) + 1;
+    }
+
+    /**
+     * Create an appointment with a guaranteed-unique serial number for the
+     * doctor+date, even if two bookings arrive at the same instant. Locks
+     * the existing rows for that doctor+date inside a transaction so two
+     * concurrent requests can't both read the same MAX() and collide.
+     */
+    public static function createWithSerial(array $attributes): self
+    {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($attributes) {
+            $max = static::where('doctor_id', $attributes['doctor_id'])
+                ->whereDate('appointment_date', $attributes['appointment_date'])
+                ->lockForUpdate()
+                ->max('serial_number');
+
+            $attributes['serial_number'] = ((int) $max) + 1;
+
+            return static::create($attributes);
+        });
     }
 
     public function patient()

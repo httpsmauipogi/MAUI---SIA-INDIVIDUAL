@@ -70,6 +70,19 @@
                             <input type="number" step="0.01" min="0" class="form-control @error('unit_price') is-invalid @enderror" id="unit_price" name="unit_price" value="{{ old('unit_price') }}">
                             @error('unit_price') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                         </div>
+
+                        @if (! $isBranchRestricted)
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="branch_id">Branch</label>
+                            <select class="form-control @error('branch_id') is-invalid @enderror" id="branch_id" name="branch_id">
+                                <option value="">-- Select Branch --</option>
+                                @foreach (\App\Models\Branch::where('status', 'Active')->orderBy('name')->pluck('name', 'id') as $id => $branchName)
+                                    <option value="{{ $id }}" {{ (string) old('branch_id') === (string) $id ? 'selected' : '' }}>{{ $branchName }}</option>
+                                @endforeach
+                            </select>
+                            @error('branch_id') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                        </div>
+                        @endif
                     </div>
 
                     <div class="d-flex gap-2">

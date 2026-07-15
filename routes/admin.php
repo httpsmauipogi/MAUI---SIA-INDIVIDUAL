@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdmissionController;
 use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\BedController;
+use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\DutyLogController;
@@ -34,7 +35,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/lock-screen', [AdminController::class, 'showLockScreen'])->name('lock-screen');
 
-    Route::middleware(['auth', 'role:Super Admin|Hospital Admin|Doctor|Nurse|Ward Boy|Cleaner|Receptionist|Pharmacist|Lab Technician|Accountant'])->group(function () {
+    Route::middleware(['auth', 'role:Super Admin|Hospital Admin|Branch Admin|Doctor|Nurse|Ward Boy|Cleaner|Receptionist|Pharmacist|Lab Technician|Accountant'])->group(function () {
 
         // Dashboard - every staff role lands here, AdminController decides
         // which dashboard view to show based on the user's role.
@@ -42,12 +43,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('home');
 
         // Patients - front-desk + clinical roles
-        Route::middleware('role:Super Admin|Hospital Admin|Receptionist|Doctor')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Receptionist|Doctor')->group(function () {
             Route::resource('patients', PatientController::class);
         });
 
         // Doctors directory management - admin roles only
-        Route::middleware('role:Super Admin|Hospital Admin')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin')->group(function () {
             Route::resource('doctors', DoctorController::class);
             Route::post('doctors/{doctor}/schedules', [DoctorController::class, 'addSchedule'])->name('doctors.schedules.store');
             Route::delete('doctors/{doctor}/schedules/{schedule}', [DoctorController::class, 'deleteSchedule'])->name('doctors.schedules.destroy');
@@ -59,65 +60,65 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // Appointments - front-desk + clinical roles
-        Route::middleware('role:Super Admin|Hospital Admin|Receptionist|Doctor')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Receptionist|Doctor')->group(function () {
             Route::resource('appointments', AppointmentController::class);
         });
 
         // Prescriptions - doctors write them, pharmacists dispense against them
-        Route::middleware('role:Super Admin|Hospital Admin|Doctor|Pharmacist')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Doctor|Pharmacist')->group(function () {
             Route::resource('prescriptions', PrescriptionController::class);
         });
 
         // Billing - accounts + front-desk
-        Route::middleware('role:Super Admin|Hospital Admin|Accountant|Receptionist')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Accountant|Receptionist')->group(function () {
             Route::resource('invoices', InvoiceController::class);
             Route::post('invoices/{invoice}/payment', [InvoiceController::class, 'recordPayment'])->name('invoices.payment');
         });
 
         // Expenses - accounts + admin roles only (front-desk shouldn't record costs)
-        Route::middleware('role:Super Admin|Hospital Admin|Accountant')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Accountant')->group(function () {
             Route::resource('expenses', ExpenseController::class)->except(['show']);
         });
 
         // Contact form messages - front-desk facing
-        Route::middleware('role:Super Admin|Hospital Admin|Receptionist')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Receptionist')->group(function () {
             Route::resource('messages', ContactMessageController::class)->except(['create', 'store', 'edit', 'update']);
         });
 
         // Bed / ward management - real-time availability board
-        Route::middleware('role:Super Admin|Hospital Admin|Receptionist|Nurse|Ward Boy')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Receptionist|Nurse|Ward Boy')->group(function () {
             Route::resource('beds', BedController::class);
             Route::post('beds/{bed}/assign', [BedController::class, 'assign'])->name('beds.assign');
             Route::post('beds/{bed}/discharge', [BedController::class, 'discharge'])->name('beds.discharge');
         });
 
         // IPD - patient admissions, tied to bed occupancy
-        Route::middleware('role:Super Admin|Hospital Admin|Receptionist|Nurse|Doctor')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Receptionist|Nurse|Doctor')->group(function () {
             Route::resource('admissions', AdmissionController::class);
             Route::post('admissions/{admission}/discharge', [AdmissionController::class, 'discharge'])->name('admissions.discharge');
         });
 
         // Staff duty / task tracking board (nurses, ward boys, cleaners, etc.)
-        Route::middleware('role:Super Admin|Hospital Admin|Nurse|Ward Boy|Cleaner')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Nurse|Ward Boy|Cleaner')->group(function () {
             Route::resource('duty-logs', DutyLogController::class)->except(['show']);
             Route::post('duty-logs/{dutyLog}/complete', [DutyLogController::class, 'complete'])->name('duty-logs.complete');
         });
 
         // Pharmacy - medicine inventory with restock/dispense stock tracking
-        Route::middleware('role:Super Admin|Hospital Admin|Pharmacist')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Pharmacist')->group(function () {
             Route::resource('pharmacy', MedicineController::class);
             Route::post('pharmacy/{medicine}/restock', [MedicineController::class, 'restock'])->name('pharmacy.restock');
             Route::post('pharmacy/{medicine}/dispense', [MedicineController::class, 'dispense'])->name('pharmacy.dispense');
         });
 
         // Laboratory - test catalog + patient test orders with results
-        Route::middleware('role:Super Admin|Hospital Admin|Lab Technician')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Lab Technician')->group(function () {
             Route::resource('lab-tests', LabTestController::class)->except(['show']);
             Route::resource('lab-orders', LabOrderController::class);
         });
 
         // Staff / user account management - restricted to admin roles only
-        Route::middleware('role:Super Admin|Hospital Admin')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin')->group(function () {
             Route::resource('users', UserController::class);
             Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
         });
@@ -128,7 +129,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('profile/password', [StaffProfileController::class, 'updatePassword'])->name('profile.password.update');
 
         // Reports & Analytics - revenue, appointments, doctor load, stock alerts
-        Route::middleware('role:Super Admin|Hospital Admin|Accountant')->group(function () {
+        Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Accountant')->group(function () {
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
         });
 
@@ -151,6 +152,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('page-content/cards/{card}', [PageContentController::class, 'updateCard'])->name('page-content.cards.update');
             Route::delete('page-content/cards/{card}', [PageContentController::class, 'destroyCard'])->name('page-content.cards.destroy');
             Route::post('page-content/cards/{card}/move', [PageContentController::class, 'moveCard'])->name('page-content.cards.move');
+
+            // Hospitals / Branches directory
+            Route::resource('branches', BranchController::class);
         });
     });
 });
