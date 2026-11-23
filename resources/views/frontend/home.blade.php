@@ -85,7 +85,27 @@
 
 
 							<!-- Managed from Admin > Page Content > Home > About Boxes -->
-							@foreach ($aboutBoxCards as $card)
+							@php
+								// Fallback text so this section is never blank when the CMS rows are missing.
+								$aboutBoxes = $aboutBoxCards->isNotEmpty() ? $aboutBoxCards : collect([
+									(object) [
+										'subtitle' => 'Qualified Doctors',
+										'title' => 'Where People Come First',
+										'description' => 'An magnis nulla dolor at sapien augue erat iaculis purus tempor magna ipsum vitae a purus primis ipsum magna ipsum.',
+									],
+									(object) [
+										'subtitle' => '24 Hour Service',
+										'title' => 'Highest Quality Care',
+										'description' => 'An magnis nulla dolor at sapien augue erat iaculis purus tempor magna ipsum vitae a purus primis ipsum magna ipsum.',
+									],
+									(object) [
+										'subtitle' => 'Here For You',
+										'title' => 'Emergency Department',
+										'description' => 'An magnis nulla dolor at sapien augue erat iaculis purus tempor magna ipsum vitae a purus primis ipsum magna ipsum.',
+									],
+								]);
+							@endphp
+							@foreach ($aboutBoxes as $card)
 							<div class="col-lg-4">
 								<div class="abox-3 {{ $loop->last ? '' : 'b-right' }} wow fadeInUp" data-wow-delay="{{ 0.4 + ($loop->index * 0.2) }}s">
 
