@@ -6,7 +6,7 @@
 			    	<a id="wsnavtoggle" class="wsanimated-arrow"><span></span></a>
 			    	<span class="smllogo">
 			    		@if (site_setting('logo_path'))
-			    			<img src="{{ asset('storage/' . site_setting('logo_path')) }}" width="180" height="40" alt="{{ site_setting('site_name', 'Healix HMS') }}"/>
+			    			<img src="{{ storage_url(site_setting('logo_path')) }}" width="180" height="40" alt="{{ site_setting('site_name', 'Healix HMS') }}"/>
 			    		@else
 			    			<img src="{{ asset('frontend/images/logo-grey.png') }}" width="180" height="40" alt="mobile-logo"/>
 			    		@endif
@@ -51,7 +51,7 @@
     					<div class="desktoplogo">
     						<a href="{{ route('frontend.home') }}">
     							@if (site_setting('logo_path'))
-    								<img src="{{ asset('storage/' . site_setting('logo_path')) }}" width="180" height="40" alt="{{ site_setting('site_name', 'Healix HMS') }}">
+    								<img src="{{ storage_url(site_setting('logo_path')) }}" width="180" height="40" alt="{{ site_setting('site_name', 'Healix HMS') }}">
     							@else
     								<img src="{{ asset('frontend/images/logo-grey.png') }}" width="180" height="40" alt="header-logo">
     							@endif

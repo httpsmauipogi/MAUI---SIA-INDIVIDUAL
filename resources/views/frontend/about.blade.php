@@ -27,7 +27,7 @@
 						<!-- INFO IMAGE -->
 						<div class="col-lg-6">
 							<div class="info-4-img text-center wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ $welcomeCard->image_path ? asset('storage/' . $welcomeCard->image_path) : asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="info-image">
+								<img class="img-fluid" src="{{ $welcomeCard->image_path ? storage_url($welcomeCard->image_path) : asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="info-image">
 							</div>
 						</div>
 
@@ -113,7 +113,7 @@
 							<!-- INFO IMAGE -->
 							<div class="col-lg-6">
 								<div class="info-4-img text-center wow fadeInUp" data-wow-delay="0.6s">
-									<img class="img-fluid" src="{{ $qualityCareCard->image_path ? asset('storage/' . $qualityCareCard->image_path) : asset('frontend/images/emergency_help_700x800.jpg') }}" alt="info-image">
+									<img class="img-fluid" src="{{ $qualityCareCard->image_path ? storage_url($qualityCareCard->image_path) : asset('frontend/images/emergency_help_700x800.jpg') }}" alt="info-image">
 								</div>
 							</div>
 
@@ -325,7 +325,7 @@
 					<div class="row">
 						<div class="col-lg-10 offset-lg-1">
 							<div class="banner-5-img wow fadeInUp" data-wow-delay="0.4s">
-								<img class="img-fluid" src="{{ $closingBannerCard->image_path ? asset('storage/' . $closingBannerCard->image_path) : asset('frontend/images/image-07.png') }}" alt="banner-image" />
+								<img class="img-fluid" src="{{ $closingBannerCard->image_path ? storage_url($closingBannerCard->image_path) : asset('frontend/images/image-07.png') }}" alt="banner-image" />
 							</div>
 						</div>
 					</div>

@@ -12,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ site_setting('favicon_path') ? asset('storage/' . site_setting('favicon_path')) : asset('backend/assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ site_setting('favicon_path') ? storage_url(site_setting('favicon_path')) : asset('backend/assets/images/favicon.ico') }}">
 
 
     <!-- App css -->
@@ -33,7 +33,7 @@
                                 <div class="card-body p-0 bg-black auth-header-box rounded-top">
                                     <div class="text-center p-3">
                                         <a href="{{ route('admin.dashboard') }}" class="logo logo-admin">
-                                            <img src="{{ site_setting('logo_path') ? asset('storage/' . site_setting('logo_path')) : asset('backend/assets/images/logo-sm.png') }}" height="50" alt="logo" class="auth-logo">
+                                            <img src="{{ site_setting('logo_path') ? storage_url(site_setting('logo_path')) : asset('backend/assets/images/logo-sm.png') }}" height="50" alt="logo" class="auth-logo">
                                         </a>
                                         <h4 class="mt-3 mb-1 fw-semibold text-white fs-18">@yield('auth-title')</h4>
                                         <p class="text-muted fw-medium mb-0">@yield('auth-subtitle')</p>

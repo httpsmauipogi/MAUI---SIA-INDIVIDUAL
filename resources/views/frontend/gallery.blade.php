@@ -44,12 +44,12 @@
 									<div class="hover-overlay">
 
 										<!-- Gallery Image -->
-										<img class="img-fluid" src="{{ $card->image_path ? asset('storage/' . $card->image_path) : asset('frontend/images/gallery/image-9.jpg') }}" alt="{{ $card->title ?: 'gallery-image' }}" />
+										<img class="img-fluid" src="{{ $card->image_path ? storage_url($card->image_path) : asset('frontend/images/gallery/image-9.jpg') }}" alt="{{ $card->title ?: 'gallery-image' }}" />
 										<div class="item-overlay"></div>
 
 										<!-- Image Zoom -->
 										<div class="image-zoom">
-											<a class="image-link" href="{{ $card->image_path ? asset('storage/' . $card->image_path) : asset('frontend/images/gallery/image-9.jpg') }}" title=""><i class="fas fa-search-plus"></i></a>
+											<a class="image-link" href="{{ $card->image_path ? storage_url($card->image_path) : asset('frontend/images/gallery/image-9.jpg') }}" title=""><i class="fas fa-search-plus"></i></a>
 										</div>
 
 									</div>

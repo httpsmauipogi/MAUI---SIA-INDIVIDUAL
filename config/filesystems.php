@@ -38,13 +38,43 @@ return [
             'report' => false,
         ],
 
+        // Public uploads: logos, favicons, page banners, avatars, doctor photos.
+        // Production sets PUBLIC_DISK_DRIVER=s3; an EC2 instance role supplies
+        // the AWS credentials, so no access keys are required in .env.
         'public' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'driver' => env('PUBLIC_DISK_DRIVER', 'local'),
+            // For the S3 driver this value is an object-key prefix, not a path.
+            'root' => env('PUBLIC_DISK_DRIVER', 'local') === 's3'
+                ? ''
+                : storage_path('app/public'),
+            'url' => env('PUBLIC_DISK_URL', rtrim(env('APP_URL', 'http://localhost'), '/').'/storage'),
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+        ],
+
+        // Sensitive uploads (lab reports) are never publicly readable. They are
+        // streamed by LabResultController after authentication and authorization.
+        'private' => [
+            'driver' => env('PRIVATE_DISK_DRIVER', 'local'),
+            'root' => env('PRIVATE_DISK_DRIVER') === 's3'
+                ? env('AWS_PRIVATE_PREFIX', 'private')
+                : storage_path('app/private'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
         's3' => [

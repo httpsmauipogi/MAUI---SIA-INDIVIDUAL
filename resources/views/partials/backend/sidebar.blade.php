@@ -4,11 +4,11 @@
         <div class="brand">
             <a href="{{ route('admin.dashboard') }}" class="logo">
                 <span>
-                    <img src="{{ site_setting('logo_path') ? asset('storage/' . site_setting('logo_path')) : asset('backend/assets/images/logo-sm.png') }}" alt="logo-small" class="logo-sm">
+                    <img src="{{ site_setting('logo_path') ? storage_url(site_setting('logo_path')) : asset('backend/assets/images/logo-sm.png') }}" alt="logo-small" class="logo-sm">
                 </span>
                 <span class="">
-                    <img src="{{ site_setting('logo_path') ? asset('storage/' . site_setting('logo_path')) : asset('backend/assets/images/logo-light.png') }}" alt="logo-large" class="logo-lg logo-light">
-                    <img src="{{ site_setting('logo_path') ? asset('storage/' . site_setting('logo_path')) : asset('backend/assets/images/logo-dark.png') }}" alt="logo-large" class="logo-lg logo-dark">
+                    <img src="{{ site_setting('logo_path') ? storage_url(site_setting('logo_path')) : asset('backend/assets/images/logo-light.png') }}" alt="logo-large" class="logo-lg logo-light">
+                    <img src="{{ site_setting('logo_path') ? storage_url(site_setting('logo_path')) : asset('backend/assets/images/logo-dark.png') }}" alt="logo-large" class="logo-lg logo-dark">
                 </span>
             </a>
         </div>

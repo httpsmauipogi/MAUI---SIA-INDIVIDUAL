@@ -30,7 +30,7 @@
 
 						 			<!-- BLOG POST IMAGE -->
 						 			<div class="blog-post-img">
-										<img class="img-fluid" src="{{ $card->image_path ? asset('storage/' . $card->image_path) : asset('frontend/images/blog/post-4-img.jpg') }}" alt="blog-post-image" />
+										<img class="img-fluid" src="{{ $card->image_path ? storage_url($card->image_path) : asset('frontend/images/blog/post-4-img.jpg') }}" alt="blog-post-image" />
 									</div>
 
 					 				<!-- BLOG POST TITLE -->

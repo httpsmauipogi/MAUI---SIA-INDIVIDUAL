@@ -55,7 +55,7 @@
                     <label class="form-label">Banner Image</label>
                     <input type="file" name="image" accept="image/*" class="form-control">
                     @if ($banner->image_path)
-                        <div class="mt-2"><img src="{{ asset('storage/' . $banner->image_path) }}" alt="Current banner" height="60"></div>
+                        <div class="mt-2"><img src="{{ storage_url($banner->image_path) }}" alt="Current banner" height="60"></div>
                     @endif
                 </div>
             </div>
@@ -102,7 +102,7 @@
                                     </td>
                                     <td>
                                         @if ($card->image_path)
-                                            <img src="{{ asset('storage/' . $card->image_path) }}" alt="" height="40">
+                                            <img src="{{ storage_url($card->image_path) }}" alt="" height="40">
                                         @endif
                                     </td>
                                     <td>

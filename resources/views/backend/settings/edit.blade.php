@@ -37,14 +37,14 @@
                             <label class="form-label" for="logo">Site Logo</label>
                             <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
                             @if (! empty($settings['logo_path']))
-                                <div class="mt-2"><img src="{{ asset('storage/' . $settings['logo_path']) }}" alt="Current logo" height="40"></div>
+                                <div class="mt-2"><img src="{{ storage_url($settings['logo_path']) }}" alt="Current logo" height="40"></div>
                             @endif
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label" for="favicon">Favicon</label>
                             <input type="file" class="form-control" id="favicon" name="favicon" accept="image/*">
                             @if (! empty($settings['favicon_path']))
-                                <div class="mt-2"><img src="{{ asset('storage/' . $settings['favicon_path']) }}" alt="Current favicon" height="24"></div>
+                                <div class="mt-2"><img src="{{ storage_url($settings['favicon_path']) }}" alt="Current favicon" height="24"></div>
                             @endif
                         </div>
                     </div>

@@ -110,7 +110,7 @@ class LabOrderController extends Controller
             $validated['result_file'] = $file->storeAs(
                 'lab-results',
                 Str::random(40).'.'.$file->extension(),
-                'public'
+                'private'
             );
         }
 

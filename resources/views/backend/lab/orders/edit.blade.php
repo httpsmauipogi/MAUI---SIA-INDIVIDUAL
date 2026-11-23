@@ -38,7 +38,7 @@
                         <input type="file" class="form-control @error('result_file') is-invalid @enderror" id="result_file" name="result_file">
                         @error('result_file') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
                         @if ($labOrder->result_file)
-                            <small class="text-muted d-block mt-1">Current file: <a href="{{ asset('storage/' . $labOrder->result_file) }}" target="_blank">View uploaded file</a></small>
+                            <small class="text-muted d-block mt-1">Current file: <a href="{{ route('lab-results.show', $labOrder) }}" target="_blank">View uploaded file</a></small>
                         @endif
                     </div>
 

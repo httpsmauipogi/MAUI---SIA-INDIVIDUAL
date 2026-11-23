@@ -52,7 +52,7 @@ class Doctor extends Model
     public function photoUrl(): string
     {
         return $this->photo
-            ? asset('storage/' . $this->photo)
+            ? storage_url($this->photo)
             : asset('frontend/images/doctor-' . (($this->id % 6) + 1) . '.jpg');
     }
 

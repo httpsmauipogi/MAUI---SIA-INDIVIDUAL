@@ -11,7 +11,7 @@
 								<!-- Footer Logo -->
 								<!-- For Retina Ready displays take a image with double the amount of pixels that your image will be displayed (e.g 360 x 80  pixels) -->
 				@if (site_setting('logo_path'))
-					<img src="{{ asset('storage/' . site_setting('logo_path')) }}" width="180" height="40" alt="{{ site_setting('site_name', 'Healix HMS') }}">
+					<img src="{{ storage_url(site_setting('logo_path')) }}" width="180" height="40" alt="{{ site_setting('site_name', 'Healix HMS') }}">
 				@else
 					<img src="{{ asset('frontend/images/footer-logo-white.png') }}" width="180" height="40" alt="footer-logo">
 				@endif

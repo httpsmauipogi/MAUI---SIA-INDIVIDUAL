@@ -19,7 +19,7 @@
 					@forelse ($heroSlides as $slide)
 					<li>
 						<!-- Background Image -->
-						<img src="{{ $slide->image_path ? asset('storage/' . $slide->image_path) : asset('frontend/images/flat-lay-health-still-life-arrangement-with-copy-space.jpg') }}" alt="slide-background">
+						<img src="{{ $slide->image_path ? storage_url($slide->image_path) : asset('frontend/images/flat-lay-health-still-life-arrangement-with-copy-space.jpg') }}" alt="slide-background">
 
 						<!-- Image Caption -->
 						<div class="caption d-flex align-items-center left-align">
@@ -152,7 +152,7 @@
 						<!-- IMAGE BLOCK -->
 						<div class="col-lg-6">
 							<div class="about-img text-center wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ $welcomeCard->image_path ? asset('storage/' . $welcomeCard->image_path) : asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="about-image">
+								<img class="img-fluid" src="{{ $welcomeCard->image_path ? storage_url($welcomeCard->image_path) : asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="about-image">
 							</div>
 						</div>
 
@@ -233,7 +233,7 @@
 							<div class="sbox-4 wow fadeInUp" data-wow-delay="{{ 0.4 + ($loop->index * 0.2) }}s">
 
 								<!-- Image -->
-								<img class="img-fluid" src="{{ $card->image_path ? asset('storage/' . $card->image_path) : asset($serviceFallbacks[$loop->index % count($serviceFallbacks)]) }}" alt="content-image" />
+								<img class="img-fluid" src="{{ $card->image_path ? storage_url($card->image_path) : asset($serviceFallbacks[$loop->index % count($serviceFallbacks)]) }}" alt="content-image" />
 
 								<!-- Text -->
 								<div class="sbox-4-txt">
@@ -304,7 +304,7 @@
 						<!-- IMAGE BLOCK -->
 						<div class="col-lg-6">
 							<div class="info-2-img wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ $whyChooseUsCard->image_path ? asset('storage/' . $whyChooseUsCard->image_path) : asset('frontend/images/medical_complex_700x700.jpg') }}" alt="info-image">
+								<img class="img-fluid" src="{{ $whyChooseUsCard->image_path ? storage_url($whyChooseUsCard->image_path) : asset('frontend/images/medical_complex_700x700.jpg') }}" alt="info-image">
 							</div>
 						</div>
 
@@ -903,7 +903,7 @@
 
 										<!-- Author Avatar -->
 										<div class="testimonial-avatar">
-											<img src="{{ $card->image_path ? asset('storage/' . $card->image_path) : asset('frontend/images/review-author-1.jpg') }}" alt="testimonial-avatar">
+											<img src="{{ $card->image_path ? storage_url($card->image_path) : asset('frontend/images/review-author-1.jpg') }}" alt="testimonial-avatar">
 										</div>
 
 										<!-- Testimonial Text -->
@@ -964,7 +964,7 @@
 
 				 				<!-- BLOG POST IMAGE -->
 					 			<div class="blog-post-img">
-									<img class="img-fluid" src="{{ $card->image_path ? asset('storage/' . $card->image_path) : asset('frontend/images/blog/post-1-img.jpg') }}" alt="blog-post-image" />	
+									<img class="img-fluid" src="{{ $card->image_path ? storage_url($card->image_path) : asset('frontend/images/blog/post-1-img.jpg') }}" alt="blog-post-image" />	
 								</div>
 
 				 				<!-- BLOG POST TITLE -->
@@ -1009,7 +1009,7 @@
 							<!-- CALL TO ACTION IMAGE -->
 							<div class="col-lg-5">
 								<div class="banner-2-img">
-									<img class="img-fluid" src="{{ $ctaCard->image_path ? asset('storage/' . $ctaCard->image_path) : asset('frontend/images/image-05.png') }}" alt="banner-image" />	
+									<img class="img-fluid" src="{{ $ctaCard->image_path ? storage_url($ctaCard->image_path) : asset('frontend/images/image-05.png') }}" alt="banner-image" />	
 								</div>
 							</div>
 

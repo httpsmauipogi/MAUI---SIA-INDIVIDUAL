@@ -12,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ site_setting('favicon_path') ? asset('storage/' . site_setting('favicon_path')) : asset('backend/assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ site_setting('favicon_path') ? storage_url(site_setting('favicon_path')) : asset('backend/assets/images/favicon.ico') }}">
 
 
 

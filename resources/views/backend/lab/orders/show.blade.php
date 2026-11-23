@@ -64,7 +64,7 @@
 
                 @if ($labOrder->result_file)
                     <div class="mb-4">
-                        <a href="{{ asset('storage/' . $labOrder->result_file) }}" target="_blank" class="btn btn-outline-secondary">
+                        <a href="{{ route('lab-results.show', $labOrder) }}" target="_blank" class="btn btn-outline-secondary">
                             <i class="las la-file-download"></i> View Result File
                         </a>
                     </div>
