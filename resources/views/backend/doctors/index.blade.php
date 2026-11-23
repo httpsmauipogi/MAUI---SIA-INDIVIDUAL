@@ -38,7 +38,7 @@
                                     <td>{{ $doctor->doctor_id }}</td>
                                     <td>Dr. {{ $doctor->name }}</td>
                                     <td>{{ $doctor->specialization }}</td>
-                                    <td>{{ $doctor->branch?->name ?? '-' }}</td>
+                                    <td>{{ $doctor->branchRecord?->name ?? $doctor->branch ?? '-' }}</td>
                                     <td>{{ $doctor->phone ?? '-' }}</td>
                                     <td>{{ $doctor->experience_years ? $doctor->experience_years . ' yrs' : '-' }}</td>
                                     <td>

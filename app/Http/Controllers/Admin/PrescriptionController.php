@@ -16,8 +16,10 @@ class PrescriptionController extends Controller
             ->with(['patient', 'doctor'])
             ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->when($request->search, function ($query, $search) {
-                $query->where('prescription_no', 'like', "%{$search}%")
-                    ->orWhereHas('patient', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+                $query->where(function ($q) use ($search) {
+                    $q->where('prescription_no', 'like', "%{$search}%")
+                        ->orWhereHas('patient', fn ($p) => $p->where('name', 'like', "%{$search}%"));
+                });
             })
             ->latest('prescription_date')
             ->paginate(10)

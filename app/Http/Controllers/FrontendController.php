@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Doctor;
 use App\Models\PageCard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class FrontendController extends Controller
 {
@@ -113,15 +114,7 @@ class FrontendController extends Controller
 
         $doctor = Doctor::findOrFail($validated['doctor_id']);
 
-        $patient = \App\Models\Patient::firstOrCreate(
-            ['phone' => $validated['phone']],
-            [
-                'name' => $validated['name'],
-                'gender' => $validated['gender'],
-                'email' => $validated['email'],
-                'status' => 'Active',
-            ]
-        );
+        $patient = $this->bookingPatient($validated);
 
         $reasonParts = array_filter([
             $validated['department'] ?? null,
@@ -130,7 +123,7 @@ class FrontendController extends Controller
 
         $appointment = $this->bookAppointment($patient, $doctor, $validated['appointment_date'], implode(' - ', $reasonParts) ?: 'Website appointment request', $validated['message'] ?? null);
 
-        return redirect()->route('frontend.appointment.confirmation', $appointment);
+        return redirect($this->confirmationUrl($appointment));
     }
 
     /**
@@ -159,19 +152,11 @@ class FrontendController extends Controller
             'message' => ['nullable', 'string'],
         ]);
 
-        $patient = \App\Models\Patient::firstOrCreate(
-            ['phone' => $validated['phone']],
-            [
-                'name' => $validated['name'],
-                'gender' => $validated['gender'],
-                'email' => $validated['email'],
-                'status' => 'Active',
-            ]
-        );
+        $patient = $this->bookingPatient($validated);
 
         $appointment = $this->bookAppointment($patient, $doctor, $validated['appointment_date'], 'Website appointment request', $validated['message'] ?? null);
 
-        return redirect()->route('frontend.appointment.confirmation', $appointment);
+        return redirect($this->confirmationUrl($appointment));
     }
 
     public function appointmentConfirmation(\App\Models\Appointment $appointment)
@@ -179,6 +164,43 @@ class FrontendController extends Controller
         $appointment->load('doctor', 'patient');
 
         return view('frontend.appointment-confirmation', compact('appointment'));
+    }
+
+    /**
+     * Never attach a public booking to an arbitrary record just because the
+     * phone number matches - that would let anyone add appointments to
+     * somebody else's patient file. Logged-in patients use their own record;
+     * guests get a new one.
+     */
+    private function bookingPatient(array $validated): \App\Models\Patient
+    {
+        $patient = auth()->user()?->patient ?? new \App\Models\Patient();
+
+        $patient->fill([
+            'user_id' => auth()->id(),
+            'name' => $validated['name'],
+            'gender' => $validated['gender'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'status' => 'Active',
+            'branch_id' => $patient->branch_id ?? $this->defaultBranchId(),
+        ]);
+        $patient->save();
+
+        return $patient;
+    }
+
+    /**
+     * The confirmation page contains patient details, so its URL is signed
+     * and expires - sequential appointment IDs must not be enumerable.
+     */
+    private function confirmationUrl(\App\Models\Appointment $appointment): string
+    {
+        return URL::temporarySignedRoute(
+            'frontend.appointment.confirmation',
+            now()->addDays(2),
+            ['appointment' => $appointment->id]
+        );
     }
 
     /**

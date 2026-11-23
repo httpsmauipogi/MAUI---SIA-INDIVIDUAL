@@ -14,9 +14,11 @@ class PatientController extends Controller
         $patients = Patient::query()
             ->tap(fn ($q) => $this->scopeToBranch($q))
             ->when($request->search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('patient_id', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('patient_id', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                });
             })
             ->latest()
             ->paginate(10)
@@ -43,11 +45,15 @@ class PatientController extends Controller
             'blood_group' => ['nullable', 'string', 'max:5'],
             'address' => ['nullable', 'string'],
             'guardian_name' => ['nullable', 'string', 'max:255'],
-            'branch_id' => [$this->isBranchRestricted() ? 'nullable' : 'required', 'exists:branches,id'],
+            // The branch selector is hidden when there is only one active
+            // branch, so the default branch must be applied server-side.
+            'branch_id' => ['nullable', 'exists:branches,id'],
         ]);
 
         $validated['status'] = 'Active';
-        $validated['branch_id'] = $this->currentBranchId() ?? $validated['branch_id'];
+        $validated['branch_id'] = $this->currentBranchId()
+            ?? $validated['branch_id']
+            ?? $this->defaultBranchId();
 
         Patient::create($validated);
 

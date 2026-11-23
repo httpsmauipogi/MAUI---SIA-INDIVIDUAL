@@ -20,10 +20,12 @@ class UserController extends Controller
             ->with('roles')
             ->tap(fn ($q) => $this->scopeToBranch($q))
             ->when($request->search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('employee_id', 'like', "%{$search}%")
-                    ->orWhere('designation', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('employee_id', 'like', "%{$search}%")
+                        ->orWhere('designation', 'like', "%{$search}%");
+                });
             })
             ->when($request->role, function ($query, $role) {
                 $query->whereHas('roles', fn ($q) => $q->where('name', $role));
@@ -102,7 +104,7 @@ class UserController extends Controller
     {
         $this->authorizeBranchAccess($user);
 
-        $roles = $this->assignableRoles();
+        $roles = $this->assignableRoles($user);
         $branches = $this->selectableBranches();
 
         return view('backend.users.edit', compact('user', 'roles', 'branches'));
@@ -113,7 +115,7 @@ class UserController extends Controller
         $this->authorizeBranchAccess($user);
 
         $validated = $this->validated($request, $user);
-        $this->guardAssignableRole($validated['role']);
+        $this->guardAssignableRole($validated['role'], $user);
 
         $user->update([
             'name' => $validated['name'],
@@ -199,20 +201,28 @@ class UserController extends Controller
      * admins. Only Super Admin / Hospital Admin can assign Super Admin,
      * Hospital Admin, or Branch Admin roles.
      */
-    private function assignableRoles()
+    private function assignableRoles(?User $user = null)
     {
         $query = Role::orderBy('name');
 
         if ($this->isBranchRestricted()) {
-            $query->whereNotIn('name', ['Super Admin', 'Hospital Admin', 'Branch Admin']);
+            $excluded = ['Super Admin', 'Hospital Admin', 'Branch Admin'];
+
+            // A Branch Admin editing their own account must still see their
+            // current role, otherwise the form silently demotes them.
+            if ($user) {
+                $excluded = array_values(array_diff($excluded, $user->roles->pluck('name')->all()));
+            }
+
+            $query->whereNotIn('name', $excluded);
         }
 
         return $query->get();
     }
 
-    private function guardAssignableRole(string $role): void
+    private function guardAssignableRole(string $role, ?User $user = null): void
     {
-        if ($this->isBranchRestricted() && in_array($role, ['Super Admin', 'Hospital Admin', 'Branch Admin'])) {
+        if ($this->isBranchRestricted() && in_array($role, ['Super Admin', 'Hospital Admin', 'Branch Admin']) && ! $user?->hasRole($role)) {
             abort(403, 'You are not allowed to assign that role.');
         }
     }

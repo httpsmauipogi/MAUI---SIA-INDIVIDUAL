@@ -32,9 +32,14 @@ class Doctor extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function branch()
+    /**
+     * The doctors table also has a legacy free-text "branch" column, so the
+     * relation must use a different name - $doctor->branch returns that raw
+     * string and would shadow the relationship.
+     */
+    public function branchRecord()
     {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 
     public function schedules()

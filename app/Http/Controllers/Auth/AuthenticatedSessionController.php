@@ -28,13 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $user = Auth::user();
-
-        if ($user->hasRole('Patient') && ! $user->hasAnyRole(['Super Admin', 'Hospital Admin', 'Doctor', 'Nurse', 'Ward Boy', 'Cleaner', 'Receptionist', 'Pharmacist', 'Lab Technician', 'Accountant'])) {
-            return redirect()->intended(route('patient.dashboard', absolute: false));
-        }
-
-        return redirect()->intended(route('admin.dashboard', absolute: false));
+        // The generic dashboard route resolves the role-specific destination
+        // and safely handles accounts that have no role yet (e.g. freshly
+        // registered users), which would otherwise land on a 403 admin page.
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

@@ -19,8 +19,10 @@ class AdmissionController extends Controller
             ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
             ->when($request->search, function ($q, $search) {
-                $q->where('admission_no', 'like', "%{$search}%")
-                    ->orWhereHas('patient', fn ($p) => $p->where('name', 'like', "%{$search}%"));
+                $q->where(function ($query) use ($search) {
+                    $query->where('admission_no', 'like', "%{$search}%")
+                        ->orWhereHas('patient', fn ($p) => $p->where('name', 'like', "%{$search}%"));
+                });
             })
             ->latest('admission_date')
             ->paginate(10)

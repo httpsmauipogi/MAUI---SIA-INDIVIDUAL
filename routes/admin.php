@@ -33,9 +33,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/lock-screen', [AdminController::class, 'showLockScreen'])->name('lock-screen');
-
     Route::middleware(['auth', 'role:Super Admin|Hospital Admin|Branch Admin|Doctor|Nurse|Ward Boy|Cleaner|Receptionist|Pharmacist|Lab Technician|Accountant'])->group(function () {
+
+        Route::get('/lock-screen', [AdminController::class, 'showLockScreen'])->name('lock-screen');
 
         // Dashboard - every staff role lands here, AdminController decides
         // which dashboard view to show based on the user's role.
@@ -106,7 +106,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Pharmacy - medicine inventory with restock/dispense stock tracking
         Route::middleware('role:Super Admin|Hospital Admin|Branch Admin|Pharmacist')->group(function () {
-            Route::resource('pharmacy', MedicineController::class);
+            // The controller type-hints Medicine $medicine, so the resource's
+            // default {pharmacy} parameter must be renamed or implicit binding
+            // passes an empty model to show/edit/update/destroy.
+            Route::resource('pharmacy', MedicineController::class)->parameters(['pharmacy' => 'medicine']);
             Route::post('pharmacy/{medicine}/restock', [MedicineController::class, 'restock'])->name('pharmacy.restock');
             Route::post('pharmacy/{medicine}/dispense', [MedicineController::class, 'dispense'])->name('pharmacy.dispense');
         });

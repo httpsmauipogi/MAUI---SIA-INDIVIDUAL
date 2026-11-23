@@ -51,7 +51,7 @@ class BedController extends Controller
         ]);
 
         $validated['status'] = 'Available';
-        $validated['branch_id'] = $this->currentBranchId();
+        $validated['branch_id'] = $this->defaultBranchId();
 
         Bed::create($validated);
 

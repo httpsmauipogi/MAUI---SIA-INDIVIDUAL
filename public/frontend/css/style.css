@@ -2739,7 +2739,7 @@ td.text-right {
 }
 
 .info-9-img { 
-  background-image: url(../images/info-9.jpg);
+  background-image: url(../images/hero-4.jpg);
   background-repeat: no-repeat;
   background-position: center center;   
   background-size: cover;
@@ -3095,7 +3095,7 @@ td.text-right {
   =========================================================================== */
 
 #statistic-1 {
-  background-image: url(../images/statistic.jpg);
+  background-image: url(../images/hero-4.jpg);
   padding-top: 80px;
   padding-bottom: 40px;
 }

@@ -50,6 +50,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // The admin "deactivate" control must actually block sign-in.
+        if (! Auth::user()->isActive()) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => __('This account is inactive. Please contact the hospital administrator.'),
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

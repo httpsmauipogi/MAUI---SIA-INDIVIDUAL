@@ -35,11 +35,13 @@ class PatientRegistrationController extends Controller
 
         $user->assignRole('Patient');
 
-        // Link to an existing patient record (matched by phone) if the hospital
-        // already has one on file, otherwise create a fresh patient record.
-        $patient = Patient::firstOrNew(['phone' => $validated['phone']]);
+        // Never bind a new account to an existing record by phone alone;
+        // knowing somebody's phone must not expose their portal data.
+        $patient = $user->patient ?? new Patient();
+
         $patient->fill([
             'user_id' => $user->id,
+            'branch_id' => $patient->branch_id ?? $this->defaultBranchId(),
             'name' => $validated['name'],
             'email' => $validated['email'],
             'gender' => $validated['gender'],

@@ -85,8 +85,13 @@ class User extends Authenticatable
             : 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=0d6efd&color=fff';
     }
 
-    public function branch()
+    /**
+     * The users table also has a legacy free-text "branch" column, so the
+     * relation must use a different name - $user->branch returns that raw
+     * string and would shadow the relationship.
+     */
+    public function branchRecord()
     {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 }

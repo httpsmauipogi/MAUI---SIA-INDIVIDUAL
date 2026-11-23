@@ -57,7 +57,7 @@ class AdminController extends Controller
         $beds = fn () => Bed::query()->tap(fn ($q) => $this->scopeToBranch($q));
 
         return view('backend.dashboard', [
-            'currentBranch' => $this->currentBranchId() ? auth()->user()->branch : null,
+            'currentBranch' => auth()->user()->branchRecord,
             'totalPatients' => $patients()->count(),
             'activePatients' => $patients()->where('status', 'Active')->count(),
             'totalDoctors' => $doctors()->count(),

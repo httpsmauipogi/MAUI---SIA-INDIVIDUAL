@@ -19,7 +19,7 @@
 					@forelse ($heroSlides as $slide)
 					<li>
 						<!-- Background Image -->
-						<img src="{{ $slide->image_path ? asset('storage/' . $slide->image_path) : asset('frontend/images/slider/slide-17.jpg') }}" alt="slide-background">
+						<img src="{{ $slide->image_path ? asset('storage/' . $slide->image_path) : asset('frontend/images/flat-lay-health-still-life-arrangement-with-copy-space.jpg') }}" alt="slide-background">
 
 						<!-- Image Caption -->
 						<div class="caption d-flex align-items-center left-align">
@@ -50,7 +50,7 @@
 					@empty
 					<!-- Fallback slide shown only until slides are added from Admin > Page Content > Home -->
 					<li>
-						<img src="{{ asset('frontend/images/slider/slide-17.jpg') }}" alt="slide-background">
+						<img src="{{ asset('frontend/images/flat-lay-health-still-life-arrangement-with-copy-space.jpg') }}" alt="slide-background">
 						<div class="caption d-flex align-items-center left-align">
 							<div class="container">
 								<div class="row">
@@ -152,7 +152,7 @@
 						<!-- IMAGE BLOCK -->
 						<div class="col-lg-6">
 							<div class="about-img text-center wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ $welcomeCard->image_path ? asset('storage/' . $welcomeCard->image_path) : asset('frontend/images/image-02.png') }}" alt="about-image">
+								<img class="img-fluid" src="{{ $welcomeCard->image_path ? asset('storage/' . $welcomeCard->image_path) : asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="about-image">
 							</div>
 						</div>
 
@@ -219,12 +219,21 @@
 			 		<div class="row">
 
 						<!-- Managed from Admin > Page Content > Home > Service Highlights -->
+						@php
+							// Distinct medical images for the fallback cards (used until images are set in Admin).
+							$serviceFallbacks = [
+								'frontend/images/medical_complex_700x700.jpg',
+								'frontend/images/cardiology_700x700.jpg',
+								'frontend/images/mri_700x700.jpg',
+								'frontend/images/pediatrics_700x700.jpg',
+							];
+						@endphp
 						@foreach ($homeServiceCards as $card)
 						<div class="col-md-6 col-lg-3">
 							<div class="sbox-4 wow fadeInUp" data-wow-delay="{{ 0.4 + ($loop->index * 0.2) }}s">
 
 								<!-- Image -->
-								<img class="img-fluid" src="{{ $card->image_path ? asset('storage/' . $card->image_path) : asset('frontend/images/eye_exam_700x700.jpg') }}" alt="content-image" />
+								<img class="img-fluid" src="{{ $card->image_path ? asset('storage/' . $card->image_path) : asset($serviceFallbacks[$loop->index % count($serviceFallbacks)]) }}" alt="content-image" />
 
 								<!-- Text -->
 								<div class="sbox-4-txt">
@@ -295,7 +304,7 @@
 						<!-- IMAGE BLOCK -->
 						<div class="col-lg-6">
 							<div class="info-2-img wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ $whyChooseUsCard->image_path ? asset('storage/' . $whyChooseUsCard->image_path) : asset('frontend/images/image-13.png') }}" alt="info-image">
+								<img class="img-fluid" src="{{ $whyChooseUsCard->image_path ? asset('storage/' . $whyChooseUsCard->image_path) : asset('frontend/images/medical_complex_700x700.jpg') }}" alt="info-image">
 							</div>
 						</div>
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
+
 abstract class Controller
 {
     /**
@@ -21,7 +23,22 @@ abstract class Controller
             return null;
         }
 
-        return $user->branch_id;
+        // Fail closed: an unassigned staff account must never fall back to
+        // seeing every branch's data.
+        abort_if($user->branch_id === null, 403, 'Your account is not assigned to a branch. Please contact an administrator.');
+
+        return (int) $user->branch_id;
+    }
+
+    /**
+     * Branch used for records created by global admins or public forms, which
+     * have no branch selector/context of their own.
+     */
+    protected function defaultBranchId(): ?int
+    {
+        return $this->currentBranchId()
+            ?? Branch::where('is_main', true)->value('id')
+            ?? Branch::where('status', 'Active')->orderBy('id')->value('id');
     }
 
     protected function isBranchRestricted(): bool

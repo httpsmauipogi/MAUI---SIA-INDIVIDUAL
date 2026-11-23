@@ -46,7 +46,7 @@ class ExpenseController extends Controller
     {
         $validated = $this->validateExpense($request);
         $validated['recorded_by'] = auth()->id();
-        $validated['branch_id'] = $this->currentBranchId() ?? $validated['branch_id'] ?? null;
+        $validated['branch_id'] = $this->currentBranchId() ?? $validated['branch_id'] ?? $this->defaultBranchId();
 
         Expense::create($validated);
 

@@ -67,7 +67,7 @@
                                         @endforelse
                                     </td>
                                     <td>{{ $user->designation ?? '—' }}</td>
-                                    <td>{{ $user->branch?->name ?? '—' }}</td>
+                                    <td>{{ $user->branchRecord?->name ?? $user->branch ?? '—' }}</td>
                                     <td>
                                         @if ($user->status === 'Active')
                                             <span class="badge bg-success-subtle text-success">Active</span>

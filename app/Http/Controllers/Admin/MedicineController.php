@@ -16,8 +16,10 @@ class MedicineController extends Controller
         $medicines = Medicine::query()
             ->tap(fn ($q) => $this->scopeToBranch($q))
             ->when($request->search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('generic_name', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('generic_name', 'like', "%{$search}%");
+                });
             })
             ->when($request->filter === 'low_stock', fn ($q) => $q->whereColumn('stock_quantity', '<=', 'reorder_level'))
             ->when($request->filter === 'expiring', fn ($q) => $q->whereNotNull('expiry_date')->where('expiry_date', '<=', now()->addDays(30)))
@@ -48,7 +50,7 @@ class MedicineController extends Controller
     {
         $validated = $this->validateMedicine($request);
         $validated['status'] = 'Active';
-        $validated['branch_id'] = $this->currentBranchId() ?? $validated['branch_id'] ?? null;
+        $validated['branch_id'] = $this->currentBranchId() ?? $validated['branch_id'] ?? $this->defaultBranchId();
 
         Medicine::create($validated);
 

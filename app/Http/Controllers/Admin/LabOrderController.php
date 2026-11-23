@@ -8,6 +8,7 @@ use App\Models\LabOrder;
 use App\Models\LabTest;
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class LabOrderController extends Controller
 {
@@ -18,8 +19,10 @@ class LabOrderController extends Controller
             ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
             ->when($request->search, function ($q, $search) {
-                $q->where('order_no', 'like', "%{$search}%")
-                    ->orWhereHas('patient', fn ($p) => $p->where('name', 'like', "%{$search}%"));
+                $q->where(function ($query) use ($search) {
+                    $query->where('order_no', 'like', "%{$search}%")
+                        ->orWhereHas('patient', fn ($p) => $p->where('name', 'like', "%{$search}%"));
+                });
             })
             ->latest('ordered_date')
             ->paginate(10)
@@ -91,7 +94,7 @@ class LabOrderController extends Controller
         $validated = $request->validate([
             'status' => ['required', 'in:Pending,Sample Collected,Processing,Completed,Cancelled'],
             'result_notes' => ['nullable', 'string'],
-            'result_file' => ['nullable', 'file', 'max:10240'],
+            'result_file' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
         ]);
 
         if ($validated['status'] === 'Sample Collected' && $labOrder->status !== 'Sample Collected') {
@@ -103,7 +106,12 @@ class LabOrderController extends Controller
         }
 
         if ($request->hasFile('result_file')) {
-            $validated['result_file'] = $request->file('result_file')->store('lab-results', 'public');
+            $file = $request->file('result_file');
+            $validated['result_file'] = $file->storeAs(
+                'lab-results',
+                Str::random(40).'.'.$file->extension(),
+                'public'
+            );
         }
 
         $labOrder->update($validated);

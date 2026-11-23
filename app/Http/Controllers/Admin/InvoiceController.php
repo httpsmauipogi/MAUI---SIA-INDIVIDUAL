@@ -16,8 +16,10 @@ class InvoiceController extends Controller
             ->tap(fn ($q) => $this->scopeToBranchVia($q, 'patient'))
             ->when($request->status, fn ($query, $status) => $query->where('status', $status))
             ->when($request->search, function ($query, $search) {
-                $query->where('invoice_no', 'like', "%{$search}%")
-                    ->orWhereHas('patient', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+                $query->where(function ($q) use ($search) {
+                    $q->where('invoice_no', 'like', "%{$search}%")
+                        ->orWhereHas('patient', fn ($p) => $p->where('name', 'like', "%{$search}%"));
+                });
             })
             ->latest('invoice_date')
             ->paginate(10)

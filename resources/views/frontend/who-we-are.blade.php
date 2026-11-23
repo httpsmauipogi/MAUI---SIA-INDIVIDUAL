@@ -22,7 +22,7 @@
 						<!-- IMAGE BLOCK -->
 						<div class="col-lg-6">
 							<div class="info-1-img text-center mb-40 wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="info-image">
+								<img class="img-fluid" src="{{ asset('frontend/images/flat-lay-health-still-life-arrangement-with-copy-space.jpg') }}" alt="info-image">
 							</div>
 						</div>
 

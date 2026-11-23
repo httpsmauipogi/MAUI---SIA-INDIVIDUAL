@@ -175,7 +175,7 @@
 									</div>
 
 									<!-- Preview -->	
-									<img class="img-fluid" src="{{ asset('frontend/images/video-1.png') }}" alt="video-photo" />
+									<img class="img-fluid" src="{{ asset('frontend/images/medical-technology.jpg') }}" alt="Doctor using medical technology" />
 
 								</a>
 

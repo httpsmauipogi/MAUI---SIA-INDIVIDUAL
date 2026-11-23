@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\Expense;
+use App\Models\Medicine;
 use Illuminate\Http\Request;
 
 class BranchController extends Controller
@@ -60,8 +62,12 @@ class BranchController extends Controller
 
     public function destroy(Branch $branch)
     {
-        if ($branch->doctors()->exists() || $branch->staff()->exists() || $branch->patients()->exists()) {
-            return back()->with('error', 'Cannot delete this branch while doctors, staff, or patients are still assigned to it. Reassign them first.');
+        $hasInventory = $branch->beds()->exists()
+            || Medicine::where('branch_id', $branch->id)->exists()
+            || Expense::where('branch_id', $branch->id)->exists();
+
+        if ($branch->doctors()->exists() || $branch->staff()->exists() || $branch->patients()->exists() || $hasInventory) {
+            return back()->with('error', 'Cannot delete this branch while doctors, staff, patients, beds, inventory, or expenses are still assigned to it. Reassign them first.');
         }
 
         $branch->delete();

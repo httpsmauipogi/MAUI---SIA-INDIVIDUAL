@@ -17,9 +17,11 @@ class DoctorController extends Controller
         $doctors = Doctor::query()
             ->tap(fn ($q) => $this->scopeToBranch($q))
             ->when($request->search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('doctor_id', 'like', "%{$search}%")
-                    ->orWhere('specialization', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('doctor_id', 'like', "%{$search}%")
+                        ->orWhere('specialization', 'like', "%{$search}%");
+                });
             })
             ->latest()
             ->paginate(10)
