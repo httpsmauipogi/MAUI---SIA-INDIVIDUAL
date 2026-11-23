@@ -22,7 +22,7 @@
 						<!-- IMAGE BLOCK -->
 						<div class="col-lg-6">
 							<div class="info-1-img text-center mb-40 wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ asset('frontend/images/image-11.png') }}" alt="info-image">
+								<img class="img-fluid" src="{{ asset('frontend/images/chief_doctor_700x800.jpg') }}" alt="info-image">
 							</div>
 						</div>
 
@@ -305,7 +305,7 @@
 						<!-- IMAGE BLOCK -->
 						<div class="col-lg-6">
 							<div class="about-img text-center wow fadeInUp" data-wow-delay="0.6s">
-								<img class="img-fluid" src="{{ asset('frontend/images/image-01.png') }}" alt="about-image">
+										<img class="img-fluid" src="{{ asset('frontend/images/medical_complex_700x700.jpg') }}" alt="about-image">
 							</div>
 						</div>
 
