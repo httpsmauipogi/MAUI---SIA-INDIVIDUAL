@@ -63,7 +63,8 @@ mysqldump -u "$OLD_DB_USER" -p --single-transaction --routines --triggers "$OLD_
 
 ```bash
 export BUCKET=healix-hms-uploads-87284509958
-aws s3 sync "$OLD_APP_DIR/storage/app/public/" "s3://$BUCKET/" --region us-east-1
+# Exclude lab reports from the public sync (the bucket policy only protects /private/*).
+aws s3 sync "$OLD_APP_DIR/storage/app/public/" "s3://$BUCKET/" --region us-east-1 --exclude "lab-results/*"
 aws s3 sync "$OLD_APP_DIR/storage/app/public/lab-results/" "s3://$BUCKET/private/lab-results/" --region us-east-1
 ```
 
