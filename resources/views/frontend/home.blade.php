@@ -56,8 +56,25 @@
 								<div class="row">
 									<div class="col-sm-9 col-md-7 col-lg-6 offset-sm-3 offset-md-5 offset-lg-6">
 										<div class="caption-txt">
-											<h2 class="steelblue-color">{{ site_setting('hero_title', 'Bring world into focus') }}</h2>
-											<p class="p-md">{{ site_setting('hero_description', 'Feugiat primis ligula risus auctor egestas augue mauri viverra tortor in iaculis placerat eugiat mauris ipsum at viverra tortor and gravida purus pretium auctor lorem primis mollis') }}</p>
+											<h2 class="steelblue-color">Bring world into focus</h2>
+											<p class="p-md">Feugiat primis ligula risus auctor egestas augue mauri viverra tortor in iaculis placerat eugiat mauris ipsum at viverra tortor and gravida purus pretium auctor lorem primis mollis</p>
+											<a href="{{ route('frontend.who-we-are') }}" class="btn btn-blue tra-black-hover">Get More Info</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<!-- Second fallback slide -->
+					<li>
+						<img src="{{ asset('frontend/images/flat-lay-health-still-life-arrangement-with-copy-space.jpg') }}" alt="slide-background">
+						<div class="caption d-flex align-items-center left-align">
+							<div class="container">
+								<div class="row">
+									<div class="col-sm-9 col-md-7 col-lg-6 offset-sm-3 offset-md-5 offset-lg-6">
+										<div class="caption-txt">
+											<h2 class="steelblue-color">Enhancing your vision</h2>
+											<p class="p-md">Fringilla risus nec, luctus mauris orci auctor purus euismod pretium purus pretium ligula rutrum tempor sapien.</p>
 											<a href="{{ route('frontend.who-we-are') }}" class="btn btn-blue tra-black-hover">Get More Info</a>
 										</div>
 									</div>
@@ -146,19 +163,19 @@
 							<div class="txt-block pc-30 wow fadeInUp" data-wow-delay="0.4s">
 
 								<!-- Section ID -->	
-					 			<span class="section-id blue-color">{{ $welcomeCard->subtitle }}</span>
+					 			<span class="section-id blue-color">{{ $welcomeCard->subtitle ?: 'Welcome to Healix HMS' }}</span>
 
 								<!-- Title -->
-								<h3 class="h3-md steelblue-color">{{ $welcomeCard->title }}</h3>
+								<h3 class="h3-md steelblue-color">{{ $welcomeCard->title ?: 'Complete Medical Solutions in One Place' }}</h3>
 
 								<!-- Text -->
-								<p>{{ $welcomeCard->description }}</p>
+								<p>{{ $welcomeCard->description ?: 'Porta semper lacus cursus, feugiat primis ultrice in ligula risus auctor tempus feugiat dolor lacinia cubilia curae integer congue leo metus, eu mollis lorem primis in orci integer metus mollis faucibus.' }}</p>
 
 								<!-- Singnature -->
 								<div class="singnature mt-35">
 
 									<!-- Signature shown as text (the old 400x70 signature image looked like a placeholder) -->
-									<p class="p-small mb-15">{{ $welcomeCard->link_text }}</p>
+									<p class="p-small mb-15">{{ $welcomeCard->link_text ?: 'Randon Pexon, Head of Clinic' }}</p>
 									<p class="signature-text">Healix HMS</p>
 
 								</div>
