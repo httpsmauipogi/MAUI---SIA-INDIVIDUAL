@@ -5731,3 +5731,14 @@ nav a#pull {
 }
 
 
+
+/* Signature displayed as text instead of the old placeholder image */
+.signature-text {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 26px;
+  font-weight: 600;
+  color: #3454d1;
+  margin: 4px 0 0;
+  letter-spacing: .5px;
+}

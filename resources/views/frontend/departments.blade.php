@@ -47,12 +47,9 @@
 								<!-- Singnature -->
 								<div class="singnature mt-35">
 
-									<!-- Text -->
+									<!-- Signature shown as text (the old signature image looked like a placeholder) -->
 									<p class="p-small mb-15">Randon Pexon, Head of Clinic</p>
-
-									<!-- Singnature Image -->
-									<!-- Recommended sizes for Retina Ready displays is 400x68px; -->
-									<img class="img-fluid" src="{{ asset('frontend/images/signature.png') }}" width="200" height="34" alt="signature-image" />	
+									<p class="signature-text">Healix HMS</p>	
 
 								</div>
 

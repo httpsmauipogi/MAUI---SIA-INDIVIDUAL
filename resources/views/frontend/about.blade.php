@@ -48,11 +48,9 @@
 								<!-- Singnature -->
 								<div class="singnature mt-35">
 
-									<!-- Text -->
+									<!-- Signature shown as text (the old signature image looked like a placeholder) -->
 									<p class="p-small mb-15">{{ $welcomeCard->link_text }}</p>
-
-									<!-- Singnature Image -->
-									<img class="img-fluid" src="{{ asset('frontend/images/signature.png') }}" width="200" height="34" alt="signature-image" />	
+									<p class="signature-text">Healix HMS</p>
 
 								</div>
 
